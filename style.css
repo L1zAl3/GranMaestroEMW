@@ -1,0 +1,198 @@
+:root {
+    --rojo-emw: #a31d1d;
+    --crema: #fdfaf5;
+    --texto: #333;
+    --borde: #ddd;
+}
+
+body {
+    background-color: #f0f0f0;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    color: var(--texto);
+    margin: 0;
+    padding: 20px;
+}
+
+.main-container {
+    background: var(--crema);
+    max-width: 600px;
+    margin: 0 auto;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    padding: 30px;
+    border: 1px solid #e0e0e0;
+}
+
+.header { text-align: center; margin-bottom: 25px; }
+.logo { width: 100px; margin-bottom: 10px; }
+h1 { font-size: 1.4rem; color: var(--rojo-emw); margin: 0; }
+h2 { font-size: 1rem; color: #666; font-weight: 300; }
+
+.quote-container {
+    background: #fff;
+    border: 1px solid #ecc9c9;
+    border-radius: 10px;
+    padding: 15px;
+    font-style: italic;
+    font-size: 0.95rem;
+    margin-bottom: 25px;
+    color: #555;
+    text-align: center;
+}
+
+.radio-opciones-grandes {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.btn-radio {
+    flex: 1;
+    background: #fff;
+    border: 2px solid var(--borde);
+    padding: 15px;
+    border-radius: 10px;
+    text-align: center;
+    cursor: pointer;
+    transition: 0.3s;
+    font-weight: bold;
+}
+
+input[type="radio"]:checked + .btn-radio {
+    background: var(--rojo-emw);
+    color: white;
+    border-color: var(--rojo-emw);
+}
+
+/* Solo escondemos los círculos en las tallas y la opción de extranjero */
+.tallas-container input[type="radio"],
+.radio-opciones-grandes input[type="radio"] {
+    display: none;
+}
+
+/* Estilo para que las opciones de pago se vean ordenadas y legibles */
+.radio-option {
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    font-size: 1.1rem; /* Un poco más grande para facilitar el clic */
+    cursor: pointer;
+}
+
+.radio-option input[type="radio"] {
+    margin-right: 10px;
+    width: 20px; /* Círculo más grande para personas de 50+ */
+    height: 20px;
+    cursor: pointer;
+    margin-right: 12px;
+    accent-color: var(--rojo-emw); /* Esto hace que el círculo sea rojo al marcarlo */
+}
+
+.radio-option label {
+    font-weight: normal; /* Para que no compita con el título del grupo */
+    font-size: 1.1rem;
+    cursor: pointer;
+}
+
+.animate-fadin {
+    animation: fadeIn 0.5s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.honestidad { border: 2px solid var(--rojo-emw); border-style: double; }
+
+.input-group { margin-bottom: 20px; }
+label { display: block; font-weight: bold; margin-bottom: 8px; font-size: 0.9rem; }
+
+input[type="text"], select, textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid var(--borde);
+    border-radius: 8px;
+    box-sizing: border-box;
+    font-size: 1rem;
+}
+
+.form-row { display: flex; gap: 15px; }
+.form-row .input-group { flex: 1; }
+
+.tallas-container { display: flex; gap: 10px; }
+.tallas-container input { display: none; }
+.tallas-container label {
+    flex: 1;
+    text-align: center;
+    padding: 10px;
+    background: white;
+    border: 1px solid var(--borde);
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.tallas-container input:checked + label {
+    background: var(--rojo-emw);
+    color: white;
+    border-color: var(--rojo-emw);
+}
+
+.btn-main {
+    background: var(--rojo-emw);
+    color: white;
+    border: none;
+    padding: 18px;
+    width: 100%;
+    border-radius: 10px;
+    font-weight: bold;
+    font-size: 1.1rem;
+    cursor: pointer;
+    text-transform: uppercase;
+}
+
+.resumen-box {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    line-height: 1.6;
+    border-left: 5px solid var(--rojo-emw);
+}
+
+/* Responsivo para móviles */
+@media (max-width: 480px) {
+    .form-row { flex-direction: column; gap: 0; }
+    .main-container { padding: 15px; }
+}
+
+/* Estilo del Modal */
+.modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); align-items: center; justify-content: center; z-index: 1000; }
+.modal-content { background: white; padding: 30px; border-radius: 15px; max-width: 90%; text-align: center; }
+
+.btn-edit {
+    background: transparent; /* Fondo transparente para no competir con el rojo */
+    color: #666; /* Texto en un gris oscuro legible */
+    border: 2px solid #ccc; /* Borde sutil */
+    padding: 12px;
+    width: 100%;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 15px; /* Espacio respecto al botón de arriba */
+    transition: all 0.3s ease; /* Animación suave al pasar el mouse */
+    text-transform: uppercase;
+}
+
+/* Efecto cuando pasan el mouse o presionan en el celular */
+.btn-edit:hover {
+    background-color: #eee;
+    border-color: #999;
+    color: #333;
+}
+
+/* Efecto visual al hacer clic */
+.btn-edit:active {
+    transform: scale(0.98);
+}

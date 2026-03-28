@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro EMW - Escuela Mexicana de WUSHU</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="main-container">
+        <header class="header">
+            <img src="/imagenes/logo-emw.png" alt="EMW Logo" class="logo">
+            <h1>REGISTRO DE ASISTENCIA</h1>
+            <h2>ENCUENTRO CON EL GRAN MAESTRO</h2>
+        </header>
+
+        <div class="quote-container">
+            <p>"El Wushu no se trata de vencer a otros, sino de superarse a uno mismo. Bienvenido a un encuentro con la maestría; tu lugar en este camino te espera."</p>
+        </div>
+
+        <form id="registroForm" action="guardar.php" method="POST">
+            <div id="paso-datos">
+                <div class="input-group">
+                    <label>Nombre completo</label>
+                    <input type="text" name="nombre" placeholder="Ej. Juan Pérez" required>
+                </div>
+
+                <div class="input-group">
+                    <label>Nombre completo de tu instructor</label>
+                    <input type="text" name="instructor" placeholder="Ej. Maestro Li" required>
+                </div>
+
+                <div class="input-group">
+                    <label>¿Eres extranjero?</label>
+                    <div class="radio-opciones-grandes">
+                        <input type="radio" name="extranjero" value="no" id="ext_no" onclick="gestionarUbicacion('mexico')" checked>
+                        <label for="ext_no" class="btn-radio">No, vivo en México</label>
+        
+                        <input type="radio" name="extranjero" value="si" id="ext_si" onclick="gestionarUbicacion('extranjero')">
+                        <label for="ext_si" class="btn-radio">Sí, soy extranjero</label>
+                    </div>
+                </div>
+
+<div id="seccion-mexico" class="input-group animate-fadin">
+    <label>Selecciona tu Estado</label>
+    <select name="estado_mexico">
+        <option value="">-- Selecciona un estado --</option>
+        <option value="Aguascalientes">Aguascalientes</option>
+        <option value="Baja California">Baja California Norte</option>
+        <option value="Baja California Sur">Baja California Sur</option>
+        <option value="Campeche">Campeche</option>
+        <option value="Chiapas">Chiapas</option>
+        <option value="Chihuahua">Chihuahua</option>
+        <option value="Ciudad de México">Ciudad de México</option>
+        <option value="Coahuila">Coahuila</option>
+        <option value="Colima">Colima</option>
+        <option value="Durango">Durango</option>
+        <option value="Estado de México">Estado de México</option>
+        <option value="Guanajuato">Guanajuato</option>
+        <option value="Guerrero">Guerrero</option>
+        <option value="Hidalgo">Hidalgo</option>
+        <option value="Jalisco">Jalisco</option>
+        <option value="Michoacán">Michoacán</option>
+        <option value="Morelos">Morelos</option>
+        <option value="Nayarit">Nayarit</option>
+        <option value="Nuevo León">Nuevo León</option>
+        <option value="Oaxaca">Oaxaca</option>
+        <option value="Puebla">Puebla</option>
+        <option value="Querétaro">Querétaro</option>
+        <option value="Quintana Roo">Quintana Roo</option>
+        <option value="San Luis Potosí">San Luis Potosí</option>
+        <option value="Sinaloa">Sinaloa</option>
+        <option value="Sonora">Sonora</option>
+        <option value="Tabasco">Tabasco</option>
+        <option value="Tamaulipas">Tamaulipas</option>
+        <option value="Tlaxcala">Tlaxcala</option>
+        <option value="Veracruz">Veracruz</option>
+        <option value="Yucatán">Yucatán</option>
+        <option value="Zacatecas">Zacatecas</option>
+    </select>
+</div>
+
+<div id="seccion-extranjero" class="input-group animate-fadin" style="display:none;">
+    <label>Escribe tu dirección completa (País, Ciudad)</label>
+    <textarea name="direccion_extranjero" rows="3" placeholder="Ej. Bogotá, Colombia"></textarea>
+</div>
+
+                <div class="input-group">
+                    <label>Talla de playera</label>
+                    <div class="tallas-container">
+                        <input type="radio" name="talla" value="CH" id="talla-ch"><label for="talla-ch">CH</label>
+                        <input type="radio" name="talla" value="M" id="talla-m" checked><label for="talla-m">M</label>
+                        <input type="radio" name="talla" value="G" id="talla-g"><label for="talla-g">G</label>
+                        <input type="radio" name="talla" value="XG" id="talla-xg"><label for="talla-xg">XG</label>
+                    </div>
+                </div>
+
+                <div class="quote-container honestidad">
+                    <p>"La base de toda arte marcial es la rectitud del corazón. Confirma el estado de tu aporte con la verdad de un guerrero."</p>
+                </div>
+
+                <div class="input-group">
+                    <label>Estatus de pago</label>
+                    <div class="radio-option">
+                        <input type="radio" name="pago" value="Ya realicé mi pago" id="pago_si"> 
+                        <label for="pago_si">Ya realicé mi pago</label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" name="pago" value="Pendiente" id="pago_pen"> 
+                        <label for="pago_pen">Pendiente</label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" name="pago" value="Pagaré el día del evento" id="pago_hoy"> 
+                        <label for="pago_hoy">Pagaré el día del evento</label>
+                    </div>
+                </div>
+                <br>
+                <div class="privacy-check">
+                    <input type="checkbox" id="acepto-privacidad" required> 
+                    Acepto el <a href="#" onclick="togglePrivacy()">Aviso de Privacidad</a>
+                </div>
+
+                <button type="button" class="btn-main" onclick="mostrarResumen()">REVISAR INFORMACIÓN</button>
+            </div>
+
+            <div id="seccion-resumen" style="display:none;">
+                <h3 class="resumen-titulo">RESUMEN DE INFORMACIÓN</h3>
+                <div id="info-content" class="resumen-box"></div>
+                <button type="button" class="btn-main" onclick="confirmarAsistenciaFinal()">CONFIRMAR ASISTENCIA</button>
+                <button type="button" class="btn-edit" onclick="editarDatos()">Modificar datos</button>
+            </div>
+        </form>
+    </div>
+
+    <div id="privacyModal" class="modal">
+        <div class="modal-content">
+            <h3>Aviso de Privacidad</h3>
+            <p>Los datos personales aquí recabados serán utilizados únicamente para el registro, logística y entrega de materiales del curso de la Escuela Mexicana de WUSHU. No se compartirán con terceros sin su consentimiento expreso.</p>
+            <button class="btn-main" onclick="togglePrivacy()">Cerrar</button>
+        </div>
+    </div>
+
+
+    <script src="script.js"></script>
+</body>
+</html>

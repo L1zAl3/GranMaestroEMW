@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro Exitoso - EMW</title>
+    <link rel="stylesheet" href="style.css"> 
+    <style>
+        /* Estilos específicos para que la confirmación luzca perfecta */
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0; /* Fondo gris claro igual que el index */
+        }
+        .success-card {
+            text-align: center;
+            padding: 40px;
+            max-width: 500px;
+        }
+        .logo-confirmacion {
+            max-width: 250px;
+            width: 100%;
+            height: auto;
+            margin-bottom: 30px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="main-container success-card">
+        <img src="imagenes/logo-emw.png" alt="Registro Exitoso EMW" class="logo-confirmacion">
+        
+        <h1 style="color: var(--rojo-emw); margin-top: 20px;">¡Bienvenido al Encuentro, Guerrero!</h1>
+        
+        <p style="font-size: 1.2rem; color: #555; line-height: 1.6;">
+            Tu lugar en este camino ha sido reservado con éxito.<br>
+            <b>Nos vemos en el evento con el Gran Maestro.</b>
+        </p>
+        
+        <button type="button" class="btn-edit" onclick="window.location.href='index.html';" style="margin-top: 30px;">
+            REGISTRAR A OTRA PERSONA
+        </button>
+    </div>
+
+</body>
+</html>
