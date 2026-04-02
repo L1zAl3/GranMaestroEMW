@@ -126,9 +126,20 @@ function mostrarResumen() {
     // Recolectamos datos de los inputs (sin importar si son Select o Input)
     const nombre = document.getElementsByName('nombre_completo')[0].value;
     
-    // Para el instructor, si existe el select, tomamos el texto de la opción elegida
-    const maestroSelect = document.getElementsByName('id_instructor_interno')[0];
-    const maestroText = maestroSelect ? maestroSelect.options[maestroSelect.selectedIndex].text : "N/A";
+    // 4. LÓGICA CRÍTICA: Captura del Instructor
+    let instructorFinal = "";
+    const selectMaestroInterno = document.getElementsByName('id_instructor_interno')[0];
+    const inputMaestroExterno = document.getElementsByName('nombre_maestro_externo')[0];
+
+    // Si el select de maestros internos existe y está visible
+    if (selectMaestroInterno && selectMaestroInterno.offsetParent !== null) {
+        instructorFinal = selectMaestroInterno.options[selectMaestroInterno.selectedIndex].text;
+        if (selectMaestroInterno.value === "") instructorFinal = "No seleccionado";
+    } 
+    // Si no, buscamos en el input de texto de externos
+    else if (inputMaestroExterno) {
+        instructorFinal = inputMaestroExterno.value || "No especificado";
+    }
     
     const talla = document.querySelector('input[name="talla"]:checked').value;
     const pago = document.getElementsByName('pago')[0].value;
