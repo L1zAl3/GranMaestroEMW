@@ -20,117 +20,86 @@
         </div>
 
         <form id="registroForm" action="guardar.php" method="POST">
-            <div id="paso-datos">
-                <div class="input-group">
-                    <label>Nombre completo</label>
-                    <input type="text" name="nombre" placeholder="Ej. Juan Pérez" required>
-                </div>
-
-                <div class="input-group">
-                    <label>Nombre completo de tu instructor</label>
-                    <input type="text" name="instructor" placeholder="Ej. Maestro Li" required>
-                </div>
-
-                <div class="input-group">
-                    <label>¿Eres extranjero?</label>
-                    <div class="radio-opciones-grandes">
-                        <input type="radio" name="extranjero" value="no" id="ext_no" onclick="gestionarUbicacion('mexico')" checked>
-                        <label for="ext_no" class="btn-radio">No, vivo en México</label>
+    <!-- SECCIÓN 1: EL FILTRO DINÁMICO (PASO DATOS) -->
+    <div id="paso-datos">
         
-                        <input type="radio" name="extranjero" value="si" id="ext_si" onclick="gestionarUbicacion('extranjero')">
-                        <label for="ext_si" class="btn-radio">Sí, soy extranjero</label>
-                    </div>
-                </div>
+        <!-- 1. Pregunta Maestra -->
+        <div class="input-group">
+            <label>¿Cuál es tu relación con la escuela?</label>
+            <select id="tipo-usuario" name="tipo_usuario" onchange="gestionarFlujo()" required>
+                <option value="">-- Selecciona una opción --</option>
+                <option value="alumno_escuela">Soy Alumno de la Escuela Mexicana de Wushu (México)</option>
+                <option value="instructor_escuela">Soy Instructor de la Escuela Mexicana de Wushu (México)</option>
+                <option value="alumno_extranjero">Soy Alumno Extranjero (Fuera de México)</option>
+                <option value="instructor_extranjero">Soy Instructor Extranjero (Fuera de México)</option>
+                <option value="invitado">Soy Invitado Especial / Otros</option>
+            </select>
+        </div>
 
-<div id="seccion-mexico" class="input-group animate-fadin">
-    <label>Selecciona tu Estado</label>
-    <select name="estado_mexico">
-        <option value="">-- Selecciona un estado --</option>
-        <option value="Aguascalientes">Aguascalientes</option>
-        <option value="Baja California">Baja California Norte</option>
-        <option value="Baja California Sur">Baja California Sur</option>
-        <option value="Campeche">Campeche</option>
-        <option value="Chiapas">Chiapas</option>
-        <option value="Chihuahua">Chihuahua</option>
-        <option value="Ciudad de México">Ciudad de México</option>
-        <option value="Coahuila">Coahuila</option>
-        <option value="Colima">Colima</option>
-        <option value="Durango">Durango</option>
-        <option value="Estado de México">Estado de México</option>
-        <option value="Guanajuato">Guanajuato</option>
-        <option value="Guerrero">Guerrero</option>
-        <option value="Hidalgo">Hidalgo</option>
-        <option value="Jalisco">Jalisco</option>
-        <option value="Michoacán">Michoacán</option>
-        <option value="Morelos">Morelos</option>
-        <option value="Nayarit">Nayarit</option>
-        <option value="Nuevo León">Nuevo León</option>
-        <option value="Oaxaca">Oaxaca</option>
-        <option value="Puebla">Puebla</option>
-        <option value="Querétaro">Querétaro</option>
-        <option value="Quintana Roo">Quintana Roo</option>
-        <option value="San Luis Potosí">San Luis Potosí</option>
-        <option value="Sinaloa">Sinaloa</option>
-        <option value="Sonora">Sonora</option>
-        <option value="Tabasco">Tabasco</option>
-        <option value="Tamaulipas">Tamaulipas</option>
-        <option value="Tlaxcala">Tlaxcala</option>
-        <option value="Veracruz">Veracruz</option>
-        <option value="Yucatán">Yucatán</option>
-        <option value="Zacatecas">Zacatecas</option>
-    </select>
-</div>
-
-<div id="seccion-extranjero" class="input-group animate-fadin" style="display:none;">
-    <label>Escribe tu dirección completa (País, Ciudad)</label>
-    <textarea name="direccion_extranjero" rows="3" placeholder="Ej. Bogotá, Colombia"></textarea>
-</div>
-
-                <div class="input-group">
-                    <label>Talla de playera</label>
-                    <div class="tallas-container">
-                        <input type="radio" name="talla" value="CH" id="talla-ch"><label for="talla-ch">CH</label>
-                        <input type="radio" name="talla" value="M" id="talla-m" checked><label for="talla-m">M</label>
-                        <input type="radio" name="talla" value="G" id="talla-g"><label for="talla-g">G</label>
-                        <input type="radio" name="talla" value="XG" id="talla-xg"><label for="talla-xg">XG</label>
-                    </div>
-                </div>
-
-                <div class="quote-container honestidad">
-                    <p>"La base de toda arte marcial es la rectitud del corazón. Confirma el estado de tu aporte con la verdad de un guerrero."</p>
-                </div>
-
-                <div class="input-group">
-                    <label>Estatus de pago</label>
-                    <div class="radio-option">
-                        <input type="radio" name="pago" value="Ya realicé mi pago" id="pago_si"> 
-                        <label for="pago_si">Ya realicé mi pago</label>
-                    </div>
-                    <div class="radio-option">
-                        <input type="radio" name="pago" value="Pendiente" id="pago_pen"> 
-                        <label for="pago_pen">Pendiente</label>
-                    </div>
-                    <div class="radio-option">
-                        <input type="radio" name="pago" value="Pagaré el día del evento" id="pago_hoy"> 
-                        <label for="pago_hoy">Pagaré el día del evento</label>
-                    </div>
-                </div>
-                <br>
-                <div class="privacy-check">
-                    <input type="checkbox" id="acepto-privacidad" required> 
-                    Acepto el <a href="#" onclick="togglePrivacy()">Aviso de Privacidad</a>
-                </div>
-
-                <button type="button" class="btn-main" onclick="mostrarResumen()">REVISAR INFORMACIÓN</button>
+        <!-- 2. Campos de Identidad (Se activan por JS) -->
+        <div id="campos-identidad" class="animate-fadin" style="display:none;">
+            <div class="input-group">
+                <label id="label-nombre">Nombre Completo</label>
+                <!-- Este contenedor cambiará entre Select para internos e Input para externos -->
+                <div id="input-dinamico-nombre"></div>
             </div>
 
-            <div id="seccion-resumen" style="display:none;">
-                <h3 class="resumen-titulo">RESUMEN DE INFORMACIÓN</h3>
-                <div id="info-content" class="resumen-box"></div>
-                <button type="button" class="btn-main" onclick="confirmarAsistenciaFinal()">CONFIRMAR ASISTENCIA</button>
-                <button type="button" class="btn-edit" onclick="editarDatos()">Modificar datos</button>
+            <!-- Este campo solo se verá si el usuario es Alumno (Escuela o Extranjero) -->
+            <div id="contenedor-maestro" class="input-group" style="display:none;">
+                <label id="label-maestro">¿Quién es tu Instructor?</label>
+                <div id="input-dinamico-maestro"></div>
             </div>
-        </form>
+        </div>
+
+        <!-- 3. Ubicación (Estado o Dirección) -->
+        <div id="grupo-ubicacion" class="input-group animate-fadin" style="display:none;">
+            <label id="label-ubicacion">Ubicación</label>
+            <div id="input-dinamico-ubicacion"></div>
+        </div>
+
+        <!-- 4. Campos Comunes (Talla y Pago) -->
+        <div id="campos-comunes" class="animate-fadin" style="display:none;">
+            <div class="input-group">
+                <label>Talla de playera</label>
+                <div class="tallas-container">
+                    <input type="radio" name="talla" value="CH" id="talla-ch"><label for="talla-ch">CH</label>
+                    <input type="radio" name="talla" value="M" id="talla-m" checked><label for="talla-m">M</label>
+                    <input type="radio" name="talla" value="G" id="talla-g"><label for="talla-g">G</label>
+                    <input type="radio" name="talla" value="XG" id="talla-xg"><label for="talla-xg">XG</label>
+                </div>
+            </div>
+
+            <div class="quote-container honestidad">
+                <p>"La base de toda arte marcial es la rectitud del corazón. Confirma tu registro con la verdad de un guerrero."</p>
+            </div>
+
+            <div class="input-group">
+                <label>Estatus de pago</label>
+                <select name="pago" required>
+                    <option value="Ya realicé mi pago">Ya realicé mi pago</option>
+                    <option value="Pendiente">Pendiente</option>
+                    <option value="Pagaré el día del evento">Pagaré el día del evento</option>
+                </select>
+            </div>
+
+            <div class="privacy-check">
+                <input type="checkbox" id="acepto-privacidad" required> 
+                Acepto el <a href="#" onclick="togglePrivacy()">Aviso de Privacidad</a>
+            </div>
+
+            <button type="button" class="btn-main" onclick="mostrarResumen()">REVISAR INFORMACIÓN</button>
+        </div>
+    </div>
+
+    <!-- SECCIÓN 2: RESUMEN (IGUAL QUE ANTES) -->
+    <div id="seccion-resumen" style="display:none;" class="animate-fadin">
+        <h3 class="resumen-titulo">RESUMEN DE INFORMACIÓN</h3>
+        <div id="info-content" class="resumen-box"></div>
+        <button type="button" class="btn-main" onclick="confirmarAsistenciaFinal()">CONFIRMAR ASISTENCIA</button>
+        <button type="button" class="btn-edit" onclick="editarDatos()">Modificar datos</button>
+    </div>
+</form>
+        
     </div>
 
     <div id="privacyModal" class="modal">
