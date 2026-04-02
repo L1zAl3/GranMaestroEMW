@@ -42,12 +42,9 @@ function actualizarCamposDinamicos(tipo) {
 
     if (tipo === 'alumno_escuela' || tipo === 'instructor_escuela') {
         // --- CASO INTERNOS ---
+        // CORRECCIÓN: Ahora el nombre se ingresa manualmente
         divNombre.innerHTML = `
-            <select name="id_usuario" required>
-                <option value="">-- Selecciona tu nombre --</option>
-                <option value="101">Liz (Alumno de Prueba)</option>
-                <option value="201">Maestro Rodrigo (Instructor)</option>
-            </select>`;
+            <input type="text" name="nombre_completo" placeholder="Escribe tu nombre completo" required>`;
         
         divMaestro.innerHTML = `
             <select name="id_instructor_interno">
