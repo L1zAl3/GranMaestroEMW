@@ -52,6 +52,13 @@ function actualizarCamposDinamicos(tipo) {
         // Solo para Alumnos de la Escuela mostramos el catálogo de Instructores
         divMaestro.innerHTML = `
             <select name="id_instructor_interno">
+                <option value="Maestro Li">Maestro Li</option>
+                
+            </select>`;
+
+        labelUbicacion.innerText = "Estado de procedencia";
+        divUbicacion.innerHTML = `
+            <select name="estado_mexico" required>
                 <option value="">-- Selecciona un estado --</option>
                 <option value="Aguascalientes">Aguascalientes</option>
                 <option value="Baja California">Baja California</option>
@@ -85,15 +92,6 @@ function actualizarCamposDinamicos(tipo) {
                 <option value="Veracruz">Veracruz</option>
                 <option value="Yucatán">Yucatán</option>
                 <option value="Zacatecas">Zacatecas</option>
-            </select>`;
-
-        labelUbicacion.innerText = "Estado de procedencia";
-        divUbicacion.innerHTML = `
-            <select name="estado_mexico" required>
-                <option value="Estado de México" selected>Estado de México</option>
-                <option value="Ciudad de México">Ciudad de México</option>
-                <option value="Hidalgo">Hidalgo</option>
-                <!-- Aquí van los demás estados -->
             </select>`;
 
     } else {
