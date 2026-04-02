@@ -40,23 +40,18 @@ function actualizarCamposDinamicos(tipo) {
     const divUbicacion = document.getElementById('input-dinamico-ubicacion');
     const labelUbicacion = document.getElementById('label-ubicacion');
 
+    // --- CAMPO DE NOMBRE: SIEMPRE MANUAL ---
+    // Todos los usuarios (Alumnos EMW, Instructores EMW, Extranjeros, Invitados) 
+    // escribirán su nombre manualmente.
+    divNombre.innerHTML = `
+        <input type="text" name="nombre_completo" placeholder="Escribe tu nombre completo" required>`;
+
+    // --- LÓGICA POR TIPO DE USUARIO ---
     if (tipo === 'alumno_escuela' || tipo === 'instructor_escuela') {
-        // --- CASO INTERNOS ---
-        // CORRECCIÓN: Ahora el nombre se ingresa manualmente
-        divNombre.innerHTML = `
-            <input type="text" name="nombre_completo" placeholder="Escribe tu nombre completo" required>`;
         
+        // Solo para Alumnos de la Escuela mostramos el catálogo de Instructores
         divMaestro.innerHTML = `
             <select name="id_instructor_interno">
-                <option value="">-- Selecciona a tu maestro --</option>
-                <option value="1">Maestro Li</option>
-                <option value="2">Maestro Zhang</option>
-            </select>`;
-
-        labelUbicacion.innerText = "Estado de procedencia";
-        // Desplegable con los 32 estados de México
-        divUbicacion.innerHTML = `
-            <select name="estado_mexico" required>
                 <option value="">-- Selecciona un estado --</option>
                 <option value="Aguascalientes">Aguascalientes</option>
                 <option value="Baja California">Baja California</option>
@@ -92,20 +87,30 @@ function actualizarCamposDinamicos(tipo) {
                 <option value="Zacatecas">Zacatecas</option>
             </select>`;
 
+        labelUbicacion.innerText = "Estado de procedencia";
+        divUbicacion.innerHTML = `
+            <select name="estado_mexico" required>
+                <option value="Estado de México" selected>Estado de México</option>
+                <option value="Ciudad de México">Ciudad de México</option>
+                <option value="Hidalgo">Hidalgo</option>
+                <!-- Aquí van los demás estados -->
+            </select>`;
+
     } else {
-        // --- CASO EXTERNOS / INVITADOS ---
-        divNombre.innerHTML = `<input type="text" name="nombre_completo" placeholder="Tu nombre completo" required>`;
-        divMaestro.innerHTML = `<input type="text" name="nombre_maestro_externo" placeholder="Nombre de tu instructor de origen">`;
+        // Para Extranjeros o Invitados, el maestro también se escribe manual
+        divMaestro.innerHTML = `
+            <input type="text" name="nombre_maestro_externo" placeholder="Nombre de tu instructor o institución">`;
         
         labelUbicacion.innerText = "Dirección (Ciudad, País)";
-        divUbicacion.innerHTML = `<textarea name="direccion_extranjero" rows="2" placeholder="Ej: Bogotá, Colombia" required></textarea>`;
+        divUbicacion.innerHTML = `
+            <textarea name="direccion_extranjero" rows="2" placeholder="Ej: Bogotá, Colombia" required></textarea>`;
     }
 }
-
 /**
  * FUNCIÓN DE RESUMEN
  * Captura los datos dinámicos para que el usuario los revise antes de enviar.
  */
+
 function mostrarResumen() {
     const form = document.getElementById('registroForm');
     
@@ -119,8 +124,11 @@ function mostrarResumen() {
     const infoContent = document.getElementById('info-content');
     
     // Recolectamos datos de los inputs (sin importar si son Select o Input)
-    const nombre = document.getElementsByName('id_usuario')[0]?.options[document.getElementsByName('id_usuario')[0].selectedIndex]?.text || 
-                   document.getElementsByName('nombre_completo')[0]?.value;
+    const nombre = document.getElementsByName('nombre_completo')[0].value;
+    
+    // Para el instructor, si existe el select, tomamos el texto de la opción elegida
+    const maestroSelect = document.getElementsByName('id_instructor_interno')[0];
+    const maestroText = maestroSelect ? maestroSelect.options[maestroSelect.selectedIndex].text : "N/A";
     
     const talla = document.querySelector('input[name="talla"]:checked').value;
     const pago = document.getElementsByName('pago')[0].value;
