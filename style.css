@@ -40,24 +40,6 @@ h2 { font-size: 1rem; color: #666; font-weight: 300; }
     text-align: center;
 }
 
-.radio-opciones-grandes {
-    display: flex;
-    gap: 10px;
-    margin-top: 10px;
-}
-
-.btn-radio {
-    flex: 1;
-    background: #fff;
-    border: 2px solid var(--borde);
-    padding: 15px;
-    border-radius: 10px;
-    text-align: center;
-    cursor: pointer;
-    transition: 0.3s;
-    font-weight: bold;
-}
-
 input[type="radio"]:checked + .btn-radio {
     background: var(--rojo-emw);
     color: white;
@@ -195,4 +177,41 @@ input[type="text"], select, textarea {
 /* Efecto visual al hacer clic */
 .btn-edit:active {
     transform: scale(0.98);
+}
+
+/* Busca donde tienes input[type="text"] y asegúrate de que esté así */
+input[type="text"], select, textarea {
+    width: 100%;
+    padding: 14px; /* Un poco más de relleno */
+    border: 1px solid var(--borde);
+    border-radius: 8px;
+    box-sizing: border-box;
+    font-size: 1.1rem; /* Aumentamos ligeramente el tamaño de letra */
+    background-color: white;
+    font-family: inherit;
+    appearance: none; /* Quita el estilo por defecto de algunos navegadores */
+    background-image: url('data:image/svg+xml;charset=US-ASCII,<svg%20xmlns="http://www.w3.org/2000/svg"%20width="292.4"%20height="292.4"><path%20fill="%23a31d1d"%20d="M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z"/></svg>');
+    background-repeat: no-repeat;
+    background-position: right 12px top 50%;
+    background-size: 12px auto;
+}
+
+.modal { 
+    display: none; 
+    position: fixed; 
+    top: 0; 
+    left: 0; 
+    width: 100%; 
+    height: 100%; 
+    background: rgba(0,0,0,0.7); /* Un poco más oscuro para que resalte el modal */
+    align-items: center; 
+    justify-content: center; 
+    z-index: 1000; 
+}
+
+/* Resaltar suavemente los campos que aparecen por JS */
+#campos-identidad, #grupo-ubicacion, #campos-comunes {
+    border-left: 3px solid var(--rojo-emw);
+    padding-left: 15px;
+    margin-top: 10px;
 }
