@@ -1,61 +1,63 @@
-function gestionarFlujo() {
-    // Obtenemos los valores principales seleccionados por el usuario
-    const tipo = document.getElementById('tipo-usuario').value;
-    const rol = document.getElementById('rol-usuario').value;
+/**
+ * GESTIÓN DE FLUJO DINÁMICO - EMW 2026
+ * Este script controla qué campos ve el usuario según su rol.
+ */
 
-    // Referencias a los contenedores del HTML para ocultar/mostrar
-    const grupoRol = document.getElementById('grupo-rol');
+function gestionarFlujo() {
+    const tipo = document.getElementById('tipo-usuario').value;
+    
+    // Referencias a contenedores
     const camposIdentidad = document.getElementById('campos-identidad');
     const contenedorMaestro = document.getElementById('contenedor-maestro');
     const grupoUbicacion = document.getElementById('grupo-ubicacion');
     const camposComunes = document.getElementById('campos-comunes');
 
-    // Paso 1: Mostrar el sub-filtro de Rol si no es "Invitado"
-    if (tipo === 'interno' || tipo === 'extranjero') {
-        grupoRol.style.display = 'block';
-    } else if (tipo === 'invitado') {
-        grupoRol.style.display = 'none';
-        configurarInvitado(); // Función para mostrar campos directos
-        return; // Salimos de la función porque invitado no necesita rol
-    } else {
-        ocultarTodo(); // Si no hay selección, limpiamos la pantalla
+    // Si no hay selección, ocultamos todo y salimos
+    if (!tipo) {
+        ocultarSecciones([camposIdentidad, grupoUbicacion, camposComunes]);
         return;
     }
 
-    // Paso 2: Si ya eligió un rol, mostramos los campos específicos
-    if (rol !== "") {
-        camposIdentidad.style.display = 'block';
-        grupoUbicacion.style.display = 'block';
-        camposComunes.style.display = 'block';
+    // 1. Mostramos las secciones base
+    camposIdentidad.style.display = 'block';
+    grupoUbicacion.style.display = 'block';
+    camposComunes.style.display = 'block';
 
-        // Lógica para el Instructor (Se oculta si el usuario ES instructor)
-        contenedorMaestro.style.display = (rol === 'alumno') ? 'block' : 'none';
-
-        // Configuramos los inputs dinámicos (Select para internos, Text para externos)
-        actualizarCamposDinamicos(tipo, rol);
+    // 2. Lógica del Instructor: Solo se pide si el usuario es ALUMNO (interno o externo)
+    if (tipo === 'alumno_escuela' || tipo === 'alumno_extranjero') {
+        contenedorMaestro.style.display = 'block';
+    } else {
+        contenedorMaestro.style.display = 'none';
     }
+
+    // 3. Inyectar los inputs correctos (Select para internos, Input para externos)
+    actualizarCamposDinamicos(tipo);
 }
 
 function actualizarCamposDinamicos(tipo) {
     const divNombre = document.getElementById('input-dinamico-nombre');
+    const divMaestro = document.getElementById('input-dinamico-maestro');
     const divUbicacion = document.getElementById('input-dinamico-ubicacion');
     const labelUbicacion = document.getElementById('label-ubicacion');
 
-    // CASO 1: Usuarios de la Escuela en México (Internos)
     if (tipo === 'alumno_escuela' || tipo === 'instructor_escuela') {
-        
-        // Para el nombre, usamos un SELECT (evita que escriban mal su nombre)
+        // --- CASO INTERNOS ---
         divNombre.innerHTML = `
             <select name="id_usuario" required>
-                <option value="">-- Selecciona tu nombre de la lista --</option>
-                <option value="1">Maestro Rodrigo (ID: 001)</option>
-                <option value="2">Maestra Elena (ID: 002)</option>
-                <option value="temp">Cargando catálogo completo...</option>
+                <option value="">-- Selecciona tu nombre --</option>
+                <option value="101">Liz (Alumno de Prueba)</option>
+                <option value="201">Maestro Rodrigo (Instructor)</option>
+            </select>`;
+        
+        divMaestro.innerHTML = `
+            <select name="id_instructor_interno">
+                <option value="">-- Selecciona a tu maestro --</option>
+                <option value="1">Maestro Li</option>
+                <option value="2">Maestro Zhang</option>
             </select>`;
 
-        labelUbicacion.innerText = "Selecciona tu Estado (México)";
-        
-        // Desplegable con los 32 estados de México
+        labelUbicacion.innerText = "Estado de procedencia";
+        / Desplegable con los 32 estados de México
         divUbicacion.innerHTML = `
             <select name="estado_mexico" required>
                 <option value="">-- Selecciona un estado --</option>
@@ -92,25 +94,63 @@ function actualizarCamposDinamicos(tipo) {
                 <option value="Yucatán">Yucatán</option>
                 <option value="Zacatecas">Zacatecas</option>
             </select>`;
-    } 
-    
-    // CASO 2: Extranjeros o Invitados (Datos abiertos)
-    else {
-        // Para externos usamos INPUT de texto libre
-        divNombre.innerHTML = `
-            <input type="text" name="nombre_completo" placeholder="Escribe tu nombre completo" required>`;
+
+    } else {
+        // --- CASO EXTERNOS / INVITADOS ---
+        divNombre.innerHTML = `<input type="text" name="nombre_completo" placeholder="Tu nombre completo" required>`;
+        divMaestro.innerHTML = `<input type="text" name="nombre_maestro_externo" placeholder="Nombre de tu instructor de origen">`;
         
-        labelUbicacion.innerText = "Dirección de procedencia (Ciudad, País)";
-        
-        divUbicacion.innerHTML = `
-            <textarea name="direccion_extranjero" rows="2" placeholder="Ej: Bogotá, Colombia" required></textarea>`;
+        labelUbicacion.innerText = "Dirección (Ciudad, País)";
+        divUbicacion.innerHTML = `<textarea name="direccion_extranjero" rows="2" placeholder="Ej: Bogotá, Colombia" required></textarea>`;
     }
 }
 
-function ocultarTodo() {
-    // Función auxiliar para resetear el formulario si el usuario cambia de opinión
-    document.getElementById('grupo-rol').style.display = 'none';
-    document.getElementById('campos-identidad').style.display = 'none';
-    document.getElementById('grupo-ubicacion').style.display = 'none';
-    document.getElementById('campos-comunes').style.display = 'none';
+/**
+ * FUNCIÓN DE RESUMEN
+ * Captura los datos dinámicos para que el usuario los revise antes de enviar.
+ */
+function mostrarResumen() {
+    const form = document.getElementById('registroForm');
+    
+    // Validación básica de HTML5
+    if (!form.checkValidity()) {
+        form.reportValidity();
+        return;
+    }
+
+    const tipo = document.getElementById('tipo-usuario').options[document.getElementById('tipo-usuario').selectedIndex].text;
+    const infoContent = document.getElementById('info-content');
+    
+    // Recolectamos datos de los inputs (sin importar si son Select o Input)
+    const nombre = document.getElementsByName('id_usuario')[0]?.options[document.getElementsByName('id_usuario')[0].selectedIndex]?.text || 
+                   document.getElementsByName('nombre_completo')[0]?.value;
+    
+    const talla = document.querySelector('input[name="talla"]:checked').value;
+    const pago = document.getElementsByName('pago')[0].value;
+
+    infoContent.innerHTML = `
+        <p><strong>Categoría:</strong> ${tipo}</p>
+        <p><strong>Nombre:</strong> ${nombre}</p>
+        <p><strong>Talla:</strong> ${talla}</p>
+        <p><strong>Estatus de Pago:</strong> ${pago}</p>
+        <hr>
+        <p style="font-size: 0.8rem; color: #888;">Verifica que tus datos sean correctos antes de confirmar.</p>
+    `;
+
+    document.getElementById('paso-datos').style.display = 'none';
+    document.getElementById('seccion-resumen').style.display = 'block';
+}
+
+// Funciones Auxiliares
+function ocultarSecciones(arr) { arr.forEach(s => s.style.display = 'none'); }
+function editarDatos() {
+    document.getElementById('paso-datos').style.display = 'block';
+    document.getElementById('seccion-resumen').style.display = 'none';
+}
+function togglePrivacy() {
+    const modal = document.getElementById('privacyModal');
+    modal.style.display = (modal.style.display === 'flex') ? 'none' : 'flex';
+}
+function confirmarAsistenciaFinal() {
+    document.getElementById('registroForm').submit();
 }
