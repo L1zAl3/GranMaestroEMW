@@ -57,7 +57,7 @@ function actualizarCamposDinamicos(tipo) {
             </select>`;
 
         labelUbicacion.innerText = "Estado de procedencia";
-        / Desplegable con los 32 estados de México
+        // Desplegable con los 32 estados de México
         divUbicacion.innerHTML = `
             <select name="estado_mexico" required>
                 <option value="">-- Selecciona un estado --</option>
