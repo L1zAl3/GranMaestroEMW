@@ -52,8 +52,8 @@ function actualizarCamposDinamicos(tipo) {
         // Solo para Alumnos de la Escuela mostramos el catálogo de Instructores
         divMaestro.innerHTML = `
             <select name="id_instructor_interno">
-                <option value="Maestro Li">Maestro Li</option>
-                
+                <option value="Maestro A">Maestro A</option>
+                <option value="Maestro B">Maestro B</option>
             </select>`;
 
         labelUbicacion.innerText = "Estado de procedencia";
