@@ -175,5 +175,11 @@ function togglePrivacy() {
     modal.style.display = (modal.style.display === 'flex') ? 'none' : 'flex';
 }
 function confirmarAsistenciaFinal() {
-    document.getElementById('registroForm').submit();
+    // Aquí es donde en la Fase 2 pondremos el código de Supabase.
+    // Por ahora, para que tu flujo sea funcional:
+    
+    console.log("Datos listos para enviar a la base de datos...");
+    
+    // Redirigimos manualmente a tu página de confirmación
+    window.location.href = "confirmacion.html";
 }
