@@ -126,7 +126,7 @@ function mostrarResumen() {
     const tipoTexto = document.getElementById('tipo-usuario').options[document.getElementById('tipo-usuario').selectedIndex].text;
 
     let nombreFinal = "";
-    let instructorFinal = "Titular / Instructor";
+    let instructorFinal = "Instructor";
 
     // LÓGICA DE CAPTURA SEGÚN TIPO
     if (tipoUsuario === 'instructor_escuela') {
