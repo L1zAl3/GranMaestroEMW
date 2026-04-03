@@ -125,18 +125,28 @@ function mostrarResumen() {
     const nombre = document.getElementsByName('nombre_completo')[0].value;
     
     // 4. LÓGICA CRÍTICA: Captura del Instructor
-    let instructorFinal = "";
-    const selectMaestroInterno = document.getElementsByName('id_instructor_interno')[0];
-    const inputMaestroExterno = document.getElementsByName('nombre_maestro_externo')[0];
+    let instructorFinal = "No especificado";
+    
+    // Obtenemos el valor del tipo de usuario para saber qué campo buscar
+    const tipoSeleccionado = document.getElementById('tipo-usuario').value;
 
-    // Si el select de maestros internos existe y está visible
-    if (selectMaestroInterno && selectMaestroInterno.offsetParent !== null) {
-        instructorFinal = selectMaestroInterno.options[selectMaestroInterno.selectedIndex].text;
-        if (selectMaestroInterno.value === "") instructorFinal = "No seleccionado";
+    // CASO: Alumnos de la Escuela (Internos)
+    if (tipoSeleccionado === 'alumno_escuela') {
+        const selectMaestro = document.getElementsByName('id_instructor_interno')[0];
+        if (selectMaestro && selectMaestro.selectedIndex !== -1) {
+            instructorFinal = selectMaestro.options[selectMaestro.selectedIndex].text;
+            // Si el usuario dejó la opción por defecto "-- Selecciona --"
+            if (selectMaestro.value === "") instructorFinal = "No seleccionado";
+        }
     } 
-    // Si no, buscamos en el input de texto de externos
-    else if (inputMaestroExterno) {
-        instructorFinal = inputMaestroExterno.value || "No especificado";
+    // CASO: Alumnos Extranjeros (Texto Manual)
+    else if (tipoSeleccionado === 'alumno_extranjero') {
+        const inputMaestroExt = document.getElementsByName('nombre_maestro_externo')[0];
+        instructorFinal = inputMaestroExt ? inputMaestroExt.value : "No especificado";
+    }
+    // CASO: Instructores o Invitados (No tienen instructor asignado)
+    else {
+        instructorFinal = "N/A (Es Instructor o Invitado)";
     }
     
     const talla = document.querySelector('input[name="talla"]:checked').value;
