@@ -124,31 +124,23 @@ function mostrarResumen() {
     // Recolectamos datos de los inputs (sin importar si son Select o Input)
     const nombre = document.getElementsByName('nombre_completo')[0].value;
     
-    // 4. LÓGICA CRÍTICA: Captura del Instructor
+    //Captura del Instructor
     let instructorFinal = "No especificado";
     
-    // Obtenemos el valor del tipo de usuario para saber qué campo buscar
-    const tipoSeleccionado = document.getElementById('tipo-usuario').value;
+    // Buscamos AMBOS campos posibles en todo el formulario
+    const selInterno = document.querySelector('select[name="id_instructor_interno"]');
+    const inpExterno = document.querySelector('input[name="nombre_maestro_externo"]');
 
-    // CASO: Alumnos de la Escuela (Internos)
-    if (tipoSeleccionado === 'alumno_escuela') {
-        const selectMaestro = document.getElementsByName('id_instructor_interno')[0];
-        if (selectMaestro && selectMaestro.selectedIndex !== -1) {
-            instructorFinal = selectMaestro.options[selectMaestro.selectedIndex].text;
-            // Si el usuario dejó la opción por defecto "-- Selecciona --"
-            if (selectMaestro.value === "") instructorFinal = "No seleccionado";
-        }
+    // Si el SELECT existe y tiene una opción elegida, la tomamos
+    if (selInterno && selInterno.selectedIndex > 0) {
+        instructorFinal = selInterno.options[selInterno.selectedIndex].text;
     } 
-    // CASO: Alumnos Extranjeros (Texto Manual)
-    else if (tipoSeleccionado === 'alumno_extranjero') {
-        const inputMaestroExt = document.getElementsByName('nombre_maestro_externo')[0];
-        instructorFinal = inputMaestroExt ? inputMaestroExt.value : "No especificado";
+    // Si no, si el INPUT de texto tiene algo escrito, lo tomamos
+    else if (inpExterno && inpExterno.value.trim() !== "") {
+        instructorFinal = inpExterno.value;
     }
-    // CASO: Instructores o Invitados (No tienen instructor asignado)
-    else {
-        instructorFinal = "N/A (Es Instructor o Invitado)";
-    }
-    
+
+    // 3. Capturar Talla y Pago
     const talla = document.querySelector('input[name="talla"]:checked').value;
     const pago = document.getElementsByName('pago')[0].value;
 
