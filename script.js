@@ -44,11 +44,11 @@ function actualizarCamposDinamicos(tipo) {
     const catalogoHTML = (nombreInput) => `
         <select name="${nombreInput}" required>
             <option value="">-- Selecciona un nombre --</option>
-            <option value="1">Maestro Li</option>
-            <option value="2">Maestro Zhang</option>
-            <option value="3">Maestro Rodrigo</option>
-            <option value="4">Maestra Elena</option>
-            <option value="0">Otro / No aparezco</option>
+            <option value="1">Sebastián</option>
+            <option value="2">Juan</option>
+            <option value="3">Rodrigo</option>
+            <option value="4">Elena</option>
+            
         </select>`;
 
     if (tipo === 'instructor_escuela') {
