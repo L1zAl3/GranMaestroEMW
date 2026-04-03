@@ -151,9 +151,9 @@ function mostrarResumen() {
 
     document.getElementById('info-content').innerHTML = `
         <div style="text-align: left; line-height: 1.6;">
-            <p><strong>Categoría:</strong> ${tipoTexto}</p>
+            <p><strong>Categoría:</strong> <span style="color: #a31d1d; font-weight: bold;"> ${tipoTexto}</span></p>
             <p><strong>Nombre:</strong> ${nombreFinal}</p>
-            <p><strong>Instructor:</strong> <span style="color: #a31d1d; font-weight: bold;">${instructorFinal}</span></p>
+            <p><strong>Instructor:</strong> ${instructorFinal}</p>
             <p><strong>Talla:</strong> ${talla}</p>
             <p><strong>Pago:</strong> ${pago}</p>
         </div>
