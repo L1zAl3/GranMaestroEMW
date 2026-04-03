@@ -40,73 +40,83 @@ function actualizarCamposDinamicos(tipo) {
     const divUbicacion = document.getElementById('input-dinamico-ubicacion');
     const labelUbicacion = document.getElementById('label-ubicacion');
 
-    // 1. EL NOMBRE SIEMPRE ES MANUAL (Para todos)
-    divNombre.innerHTML = `<input type="text" name="nombre_completo" placeholder="Escribe tu nombre completo" required>`;
-
-    // 2. EL INSTRUCTOR SIEMPRE ES SELECT (Para evitar duplicidad)
-    // Definimos el HTML del selector una sola vez para no repetir código
-    const selectorMaestroHTML = `
+    // Catálogo de Instructores Oficiales (Lo definimos una vez para reusarlo)
+    const catalogoInstructoresHTML = `
         <select name="id_instructor_interno" required>
-            <option value="">-- Selecciona a tu maestro o referente --</option>
+            <option value="">-- Selecciona tu nombre / maestro --</option>
             <option value="1">Maestro Li</option>
             <option value="2">Maestro Zhang</option>
             <option value="3">Maestro Rodrigo</option>
             <option value="4">Maestra Elena</option>
-            <option value="0">Otro / Instructor Externo</option>
+            <option value="0">Otro / No aparezco en la lista</option>
         </select>`;
 
-    // 3. APLICAMOS LÓGICA DE UBICACIÓN SEGÚN EL TIPO
-    if (tipo === 'alumno_escuela' || tipo === 'instructor_escuela') {
-        // Caso Internos: Usamos el selector de maestros y estados de México
-        divMaestro.innerHTML = selectorMaestroHTML;
+    // --- LÓGICA DE EXCEPCIÓN ---
+
+    if (tipo === 'instructor_escuela') {
+        // EXCEPCIÓN: Si es Instructor de la escuela, elige su nombre del catálogo
+        divNombre.innerHTML = catalogoInstructoresHTML;
+        
+        // No necesita elegir "quién es su instructor" porque él es el titular
+        divMaestro.innerHTML = `<p style="color: #666; font-size: 0.9rem;">Registro como Instructor Titular.</p>`;
         
         labelUbicacion.innerText = "Estado de procedencia";
-        divUbicacion.innerHTML = `
-            <select name="estado_mexico" required>
-                <option value="">-- Selecciona un estado --</option>
-                <option value="Aguascalientes">Aguascalientes</option>
-                <option value="Baja California">Baja California</option>
-                <option value="Baja California Sur">Baja California Sur</option>
-                <option value="Campeche">Campeche</option>
-                <option value="Chiapas">Chiapas</option>
-                <option value="Chihuahua">Chihuahua</option>
-                <option value="Ciudad de México">Ciudad de México</option>
-                <option value="Coahuila">Coahuila</option>
-                <option value="Colima">Colima</option>
-                <option value="Durango">Durango</option>
-                <option value="Estado de México">Estado de México</option>
-                <option value="Guanajuato">Guanajuato</option>
-                <option value="Guerrero">Guerrero</option>
-                <option value="Hidalgo">Hidalgo</option>
-                <option value="Jalisco">Jalisco</option>
-                <option value="Michoacán">Michoacán</option>
-                <option value="Morelos">Morelos</option>
-                <option value="Nayarit">Nayarit</option>
-                <option value="Nuevo León">Nuevo León</option>
-                <option value="Oaxaca">Oaxaca</option>
-                <option value="Puebla">Puebla</option>
-                <option value="Querétaro">Querétaro</option>
-                <option value="Quintana Roo">Quintana Roo</option>
-                <option value="San Luis Potosí">San Luis Potosí</option>
-                <option value="Sinaloa">Sinaloa</option>
-                <option value="Sonora">Sonora</option>
-                <option value="Tabasco">Tabasco</option>
-                <option value="Tamaulipas">Tamaulipas</option>
-                <option value="Tlaxcala">Tlaxcala</option>
-                <option value="Veracruz">Veracruz</option>
-                <option value="Yucatán">Yucatán</option>
-                <option value="Zacatecas">Zacatecas</option>
-            </select>`;
+        divUbicacion.innerHTML = `<select name="estado_mexico" required>${obtenerListaEstados()}</select>`;
+
+    } else if (tipo === 'alumno_escuela') {
+        // Alumno interno: Nombre manual, pero elige a su maestro del catálogo
+        divNombre.innerHTML = `<input type="text" name="nombre_completo" placeholder="Escribe tu nombre completo" required>`;
+        divMaestro.innerHTML = catalogoInstructoresHTML;
+        
+        labelUbicacion.innerText = "Estado de procedencia";
+        divUbicacion.innerHTML = `<select name="estado_mexico" required>${obtenerListaEstados()}</select>`;
 
     } else {
-        // Para Extranjeros o Invitados, el maestro también se escribe manual
-        divMaestro.innerHTML = `
-            <input type="text" name="nombre_maestro_externo" placeholder="Nombre de tu instructor o institución">`;
+        // Extranjeros, Invitados o Instructor Extranjero: Todo manual
+        divNombre.innerHTML = `<input type="text" name="nombre_completo" placeholder="Escribe tu nombre completo" required>`;
+        divMaestro.innerHTML = `<input type="text" name="nombre_maestro_externo" placeholder="Nombre de tu instructor o institución">`;
         
         labelUbicacion.innerText = "Dirección (Ciudad, País)";
-        divUbicacion.innerHTML = `
-            <textarea name="direccion_extranjero" rows="2" placeholder="Ej: Bogotá, Colombia" required></textarea>`;
+        divUbicacion.innerHTML = `<textarea name="direccion_extranjero" rows="2" placeholder="Ej: Bogotá, Colombia" required></textarea>`;
     }
+}
+
+// Función para no repetir los 32 estados
+function obtenerListaEstados() {
+    return `
+        <option value="">-- Selecciona un estado --</option>
+        <option value="Aguascalientes">Aguascalientes</option>
+        <option value="Baja California">Baja California</option>
+        <option value="Baja California Sur">Baja California Sur</option>
+        <option value="Campeche">Campeche</option>
+        <option value="Chiapas">Chiapas</option>
+        <option value="Chihuahua">Chihuahua</option>
+        <option value="Ciudad de México">Ciudad de México</option>
+        <option value="Coahuila">Coahuila</option>
+        <option value="Colima">Colima</option>
+        <option value="Durango">Durango</option>
+        <option value="Estado de México" selected>Estado de México</option>
+        <option value="Guanajuato">Guanajuato</option>
+        <option value="Guerrero">Guerrero</option>
+        <option value="Hidalgo">Hidalgo</option>
+        <option value="Jalisco">Jalisco</option>
+        <option value="Michoacán">Michoacán</option>
+        <option value="Morelos">Morelos</option>
+        <option value="Nayarit">Nayarit</option>
+        <option value="Nuevo León">Nuevo León</option>
+        <option value="Oaxaca">Oaxaca</option>
+        <option value="Puebla">Puebla</option>
+        <option value="Querétaro">Querétaro</option>
+        <option value="Quintana Roo">Quintana Roo</option>
+        <option value="San Luis Potosí">San Luis Potosí</option>
+        <option value="Sinaloa">Sinaloa</option>
+        <option value="Sonora">Sonora</option>
+        <option value="Tabasco">Tabasco</option>
+        <option value="Tamaulipas">Tamaulipas</option>
+        <option value="Tlaxcala">Tlaxcala</option>
+        <option value="Veracruz">Veracruz</option>
+        <option value="Yucatán">Yucatán</option>
+        <option value="Zacatecas">Zacatecas</option>`;
 }
 /**
  * FUNCIÓN DE RESUMEN
@@ -126,8 +136,18 @@ function mostrarResumen() {
     const infoContent = document.getElementById('info-content');
     
     // Recolectamos datos de los inputs (sin importar si son Select o Input)
-    const nombre = document.getElementsByName('nombre_completo')[0].value;
-    
+    const inputNombreManual = document.getElementsByName('nombre_completo')[0];
+    const selectNombreCat = document.getElementsByName('id_instructor_interno')[0];
+
+    let nombreFinal = "";
+
+    // Si el usuario es Instructor de la Escuela, el nombre está en el primer SELECT
+    if (tipoSeleccionado.includes('Instructor de la Escuela Mexicana')) {
+        nombreFinal = selectNombreCat ? selectNombreCat.options[selectNombreCat.selectedIndex].text : "No seleccionado";
+    } else {
+    // Para todos los demás, es el valor manual
+    nombreFinal = inputNombreManual ? inputNombreManual.value : "Sin nombre";
+    }
     //Captura del Instructor
     let instructorFinal = "No especificado";
     
