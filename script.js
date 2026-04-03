@@ -40,23 +40,26 @@ function actualizarCamposDinamicos(tipo) {
     const divUbicacion = document.getElementById('input-dinamico-ubicacion');
     const labelUbicacion = document.getElementById('label-ubicacion');
 
-    // --- CAMPO DE NOMBRE: SIEMPRE MANUAL ---
-    // Todos los usuarios (Alumnos EMW, Instructores EMW, Extranjeros, Invitados) 
-    // escribirán su nombre manualmente.
-    divNombre.innerHTML = `
-        <input type="text" name="nombre_completo" placeholder="Escribe tu nombre completo" required>`;
+    // 1. EL NOMBRE SIEMPRE ES MANUAL (Para todos)
+    divNombre.innerHTML = `<input type="text" name="nombre_completo" placeholder="Escribe tu nombre completo" required>`;
 
-    // --- LÓGICA POR TIPO DE USUARIO ---
+    // 2. EL INSTRUCTOR SIEMPRE ES SELECT (Para evitar duplicidad)
+    // Definimos el HTML del selector una sola vez para no repetir código
+    const selectorMaestroHTML = `
+        <select name="id_instructor_interno" required>
+            <option value="">-- Selecciona a tu maestro o referente --</option>
+            <option value="1">Maestro Li</option>
+            <option value="2">Maestro Zhang</option>
+            <option value="3">Maestro Rodrigo</option>
+            <option value="4">Maestra Elena</option>
+            <option value="0">Otro / Instructor Externo</option>
+        </select>`;
+
+    // 3. APLICAMOS LÓGICA DE UBICACIÓN SEGÚN EL TIPO
     if (tipo === 'alumno_escuela' || tipo === 'instructor_escuela') {
+        // Caso Internos: Usamos el selector de maestros y estados de México
+        divMaestro.innerHTML = selectorMaestroHTML;
         
-        // Solo para Alumnos de la Escuela mostramos el catálogo de Instructores
-        divMaestro.innerHTML = `
-            <select name="id_instructor_interno">
-                <option value="">-- Selecciona tu instructor --</option>
-                <option value="Maestro A">Maestro A</option>
-                <option value="Maestro B">Maestro B</option>
-            </select>`;
-
         labelUbicacion.innerText = "Estado de procedencia";
         divUbicacion.innerHTML = `
             <select name="estado_mexico" required>
