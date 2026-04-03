@@ -147,6 +147,7 @@ function mostrarResumen() {
     infoContent.innerHTML = `
         <p><strong>Categoría:</strong> ${tipo}</p>
         <p><strong>Nombre:</strong> ${nombre}</p>
+        <p><strong>Instructor:</strong> <span style="color: #a31d1d; font-weight: bold;">${instructorFinal}</span></p>
         <p><strong>Talla:</strong> ${talla}</p>
         <p><strong>Estatus de Pago:</strong> ${pago}</p>
         <hr>
