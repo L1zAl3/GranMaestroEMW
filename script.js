@@ -126,62 +126,63 @@ function obtenerListaEstados() {
 function mostrarResumen() {
     const form = document.getElementById('registroForm');
     
-    // Validación básica de HTML5
+    // 1. Validar que los campos requeridos estén llenos
     if (!form.checkValidity()) {
         form.reportValidity();
         return;
     }
 
-    const tipo = document.getElementById('tipo-usuario').options[document.getElementById('tipo-usuario').selectedIndex].text;
     const infoContent = document.getElementById('info-content');
-    
-    // Recolectamos datos de los inputs (sin importar si son Select o Input)
-    const inputNombreManual = document.getElementsByName('nombre_completo')[0];
-    const selectNombreCat = document.getElementsByName('id_instructor_interno')[0];
+    const tipoUsuario = document.getElementById('tipo-usuario').value;
+    const tipoTexto = document.getElementById('tipo-usuario').options[document.getElementById('tipo-usuario').selectedIndex].text;
 
+    // --- 2. CAPTURA DE NOMBRE (Lógica Flexible) ---
     let nombreFinal = "";
+    const inputManual = document.querySelector('input[name="nombre_completo"]');
+    const selectCatalogo = document.querySelector('select[name="id_instructor_interno"]');
 
-    // Si el usuario es Instructor de la Escuela, el nombre está en el primer SELECT
-    if (tipoSeleccionado.includes('Instructor de la Escuela Mexicana')) {
-        nombreFinal = selectNombreCat ? selectNombreCat.options[selectNombreCat.selectedIndex].text : "No seleccionado";
-    } else {
-    // Para todos los demás, es el valor manual
-    nombreFinal = inputNombreManual ? inputNombreManual.value : "Sin nombre";
-    }
-    //Captura del Instructor
-    let instructorFinal = "No especificado";
-    
-    // Buscamos AMBOS campos posibles en todo el formulario
-    const selInterno = document.querySelector('select[name="id_instructor_interno"]');
-    const inpExterno = document.querySelector('input[name="nombre_maestro_externo"]');
-
-    // Si el SELECT existe y tiene una opción elegida, la tomamos
-    if (selInterno && selInterno.selectedIndex > 0) {
-        instructorFinal = selInterno.options[selInterno.selectedIndex].text;
+    // Si es Instructor EMW, el nombre viene del SELECT del catálogo
+    if (tipoUsuario === 'instructor_escuela' && selectCatalogo) {
+        nombreFinal = selectCatalogo.options[selectCatalogo.selectedIndex].text;
     } 
-    // Si no, si el INPUT de texto tiene algo escrito, lo tomamos
-    else if (inpExterno && inpExterno.value.trim() !== "") {
-        instructorFinal = inpExterno.value;
+    // Para todos los demás (Alumnos, Externos, Invitados), viene del INPUT manual
+    else if (inputManual) {
+        nombreFinal = inputManual.value;
     }
 
-    // 3. Capturar Talla y Pago
-    const talla = document.querySelector('input[name="talla"]:checked').value;
+    // --- 3. CAPTURA DE INSTRUCTOR (Solo para alumnos/invitados) ---
+    let instructorFinal = "Titular / Instructor"; // Valor por defecto
+    
+    if (tipoUsuario === 'alumno_escuela' && selectCatalogo) {
+        instructorFinal = selectCatalogo.options[selectCatalogo.selectedIndex].text;
+    } else if (tipoUsuario === 'alumno_extranjero' || tipoUsuario === 'invitado') {
+        const inputMaestroExt = document.querySelector('input[name="nombre_maestro_externo"]');
+        instructorFinal = inputMaestroExt ? inputMaestroExt.value : "No especificado";
+    }
+
+    // --- 4. TALLA Y PAGO ---
+    const tallaRadio = document.querySelector('input[name="talla"]:checked');
+    const talla = tallaRadio ? tallaRadio.value : "M";
     const pago = document.getElementsByName('pago')[0].value;
 
+    // --- 5. MOSTRAR EL RESUMEN ---
     infoContent.innerHTML = `
-        <p><strong>Categoría:</strong> ${tipo}</p>
-        <p><strong>Nombre:</strong> ${nombre}</p>
-        <p><strong>Instructor:</strong> <span style="color: #a31d1d; font-weight: bold;">${instructorFinal}</span></p>
-        <p><strong>Talla:</strong> ${talla}</p>
-        <p><strong>Estatus de Pago:</strong> ${pago}</p>
+        <div style="text-align: left; line-height: 1.6;">
+            <p><strong>Categoría:</strong> ${tipoTexto}</p>
+            <p><strong>Nombre:</strong> ${nombreFinal}</p>
+            <p><strong>Instructor/Referente:</strong> <span style="color: #a31d1d; font-weight: bold;">${instructorFinal}</span></p>
+            <p><strong>Talla:</strong> ${talla}</p>
+            <p><strong>Estatus de Pago:</strong> ${pago}</p>
+        </div>
         <hr>
         <p style="font-size: 0.8rem; color: #888;">Verifica que tus datos sean correctos antes de confirmar.</p>
     `;
 
+    // Cambiar vista
     document.getElementById('paso-datos').style.display = 'none';
     document.getElementById('seccion-resumen').style.display = 'block';
+    window.scrollTo(0, 0);
 }
-
 // Funciones Auxiliares
 function ocultarSecciones(arr) { arr.forEach(s => s.style.display = 'none'); }
 function editarDatos() {
