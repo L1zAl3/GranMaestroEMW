@@ -2,184 +2,64 @@
  * GESTIÓN DE FLUJO DINÁMICO - EMW 2026
  * Este script controla qué campos ve el usuario según su rol.
  */
+// Configuración de conexión con Supabase
+const supabaseUrl = 'https://zvtwlgfzfoouxbhnpwwr.supabase.co';
+const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp2dHdsZ2Z6Zm9vdXhiaG5wd3dyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUxOTM1MDksImV4cCI6MjA5MDc2OTUwOX0._AbrD6Pv0iR1EfHboRAi1mla-V78lfKyb-knuMYszt8';
+const supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
-function gestionarFlujo() {
-    const tipo = document.getElementById('tipo-usuario').value;
-    
-    // Referencias a contenedores
-    const camposIdentidad = document.getElementById('campos-identidad');
-    const contenedorMaestro = document.getElementById('contenedor-maestro');
-    const grupoUbicacion = document.getElementById('grupo-ubicacion');
-    const camposComunes = document.getElementById('campos-comunes');
-
-    // Si no hay selección, ocultamos todo y salimos
-    if (!tipo) {
-        ocultarSecciones([camposIdentidad, grupoUbicacion, camposComunes]);
-        return;
-    }
-
-    // 1. Mostramos las secciones base
-    camposIdentidad.style.display = 'block';
-    grupoUbicacion.style.display = 'block';
-    camposComunes.style.display = 'block';
-
-    // 2. Lógica del Instructor: Solo se pide si el usuario es ALUMNO (interno o externo)
-    if (tipo === 'alumno_escuela' || tipo === 'alumno_extranjero') {
-        contenedorMaestro.style.display = 'block';
-    } else {
-        contenedorMaestro.style.display = 'none';
-    }
-
-    // 3. Inyectar los inputs correctos (Select para internos, Input para externos)
-    actualizarCamposDinamicos(tipo);
-}
-
-function actualizarCamposDinamicos(tipo) {
-    const divNombre = document.getElementById('input-dinamico-nombre');
-    const divMaestro = document.getElementById('input-dinamico-maestro');
-    const divUbicacion = document.getElementById('input-dinamico-ubicacion');
-    const labelUbicacion = document.getElementById('label-ubicacion');
-
-    // Catálogo base
-    const catalogoHTML = (nombreInput) => `
-        <select name="${nombreInput}" required>
-            <option value="">-- Selecciona un nombre --</option>
-            <option value="1">Sebastián</option>
-            <option value="2">Juan</option>
-            <option value="3">Rodrigo</option>
-            <option value="4">Elena</option>
-            
-        </select>`;
-
-    if (tipo === 'instructor_escuela') {
-        // EXCEPCIÓN: El instructor elige su nombre de la lista
-        divNombre.innerHTML = catalogoHTML('id_nombre_instructor'); 
-        divMaestro.innerHTML = `<p style="color: #666; font-size: 0.9rem;">Registro como Instructor Titular.</p>`;
-        labelUbicacion.innerText = "Estado de procedencia";
-        divUbicacion.innerHTML = `<select name="estado_mexico" required>${obtenerListaEstados()}</select>`;
-
-    } else if (tipo === 'alumno_escuela') {
-        // Alumno: Nombre manual, Maestro por catálogo
-        divNombre.innerHTML = `<input type="text" name="nombre_completo" placeholder="Tu nombre completo" required>`;
-        divMaestro.innerHTML = catalogoHTML('id_instructor_interno');
-        labelUbicacion.innerText = "Estado de procedencia";
-        divUbicacion.innerHTML = `<select name="estado_mexico" required>${obtenerListaEstados()}</select>`;
-
-    } else {
-        // Externos e Invitados
-        divNombre.innerHTML = `<input type="text" name="nombre_completo" placeholder="Tu nombre completo" required>`;
-        divMaestro.innerHTML = `<input type="text" name="nombre_maestro_externo" placeholder="Nombre de tu instructor">`;
-        labelUbicacion.innerText = "Dirección (Ciudad, País)";
-        divUbicacion.innerHTML = `<textarea name="direccion_extranjero" rows="2" placeholder="Ej: Bogotá, Colombia" required></textarea>`;
-    }
-}
-// Función para no repetir los 32 estados
-function obtenerListaEstados() {
-    return `
-        <option value="">-- Selecciona un estado --</option>
-        <option value="Aguascalientes">Aguascalientes</option>
-        <option value="Baja California">Baja California</option>
-        <option value="Baja California Sur">Baja California Sur</option>
-        <option value="Campeche">Campeche</option>
-        <option value="Chiapas">Chiapas</option>
-        <option value="Chihuahua">Chihuahua</option>
-        <option value="Ciudad de México">Ciudad de México</option>
-        <option value="Coahuila">Coahuila</option>
-        <option value="Colima">Colima</option>
-        <option value="Durango">Durango</option>
-        <option value="Estado de México" selected>Estado de México</option>
-        <option value="Guanajuato">Guanajuato</option>
-        <option value="Guerrero">Guerrero</option>
-        <option value="Hidalgo">Hidalgo</option>
-        <option value="Jalisco">Jalisco</option>
-        <option value="Michoacán">Michoacán</option>
-        <option value="Morelos">Morelos</option>
-        <option value="Nayarit">Nayarit</option>
-        <option value="Nuevo León">Nuevo León</option>
-        <option value="Oaxaca">Oaxaca</option>
-        <option value="Puebla">Puebla</option>
-        <option value="Querétaro">Querétaro</option>
-        <option value="Quintana Roo">Quintana Roo</option>
-        <option value="San Luis Potosí">San Luis Potosí</option>
-        <option value="Sinaloa">Sinaloa</option>
-        <option value="Sonora">Sonora</option>
-        <option value="Tabasco">Tabasco</option>
-        <option value="Tamaulipas">Tamaulipas</option>
-        <option value="Tlaxcala">Tlaxcala</option>
-        <option value="Veracruz">Veracruz</option>
-        <option value="Yucatán">Yucatán</option>
-        <option value="Zacatecas">Zacatecas</option>`;
-}
-/**
- * FUNCIÓN DE RESUMEN
- * Captura los datos dinámicos para que el usuario los revise antes de enviar.
- */
-
-function mostrarResumen() {
+async function confirmarAsistenciaFinal() {
     const form = document.getElementById('registroForm');
-    if (!form.checkValidity()) {
-        form.reportValidity();
-        return;
-    }
-
+    
+    // 1. Identificar el tipo de usuario para saber a qué columna enviarlo
     const tipoUsuario = document.getElementById('tipo-usuario').value;
-    const tipoTexto = document.getElementById('tipo-usuario').options[document.getElementById('tipo-usuario').selectedIndex].text;
+    
+    // 2. Preparar el objeto de datos siguiendo tu nueva estructura de 6 tablas
+    let datosRegistro = {
+        id_evento: 1, // Corresponde al evento 'Encuentro Gran Maestro 2026'
+        id_talla: obtenerIdTalla(document.querySelector('input[name="talla"]:checked').value),
+        estatus_pago: document.getElementsByName('pago')[0].value
+    };
 
-    let nombreFinal = "";
-    let instructorFinal = "Instructor";
-
-    // LÓGICA DE CAPTURA SEGÚN TIPO
-    if (tipoUsuario === 'instructor_escuela') {
-        const selNom = document.querySelector('select[name="id_nombre_instructor"]');
-        nombreFinal = selNom ? selNom.options[selNom.selectedIndex].text : "No seleccionado";
+    // 3. Lógica para asignar IDs según el rol
+    if (tipoUsuario === 'alumno_escuela') {
+        // Aquí deberías tener un sistema para identificar el ID del alumno
+        // Por ahora, si es nuevo, podrías manejar una lógica de inserción previa o simplificada
+        datosRegistro.id_alumno_emw = null; // Ajustar según tu lógica de selección de alumnos
+    } else if (tipoUsuario === 'instructor_escuela') {
+        datosRegistro.id_instructor_emw = document.getElementsByName('id_instructor_interno')[0].value;
     } else {
-        const inpNom = document.querySelector('input[name="nombre_completo"]');
-        nombreFinal = inpNom ? inpNom.value : "No escrito";
+        // Si es externo, primero debemos registrarlo en la tabla personas_externas
+        const { data: nuevoExterno } = await supabase
+            .from('personas_externas')
+            .insert([{
+                nombre_completo: document.getElementsByName('nombre_completo')[0].value,
+                procedencia: document.getElementsByName('estado_mexico')[0]?.value || document.getElementsByName('direccion_extranjero')[0]?.value,
+                rol: tipoUsuario === 'externo_maestro' ? 'Maestro Ext' : 'Alumno Ext'
+            }]).select();
         
-        if (tipoUsuario === 'alumno_escuela') {
-            const selMaestro = document.querySelector('select[name="id_instructor_interno"]');
-            instructorFinal = (selMaestro && selMaestro.selectedIndex > 0) ? selMaestro.options[selMaestro.selectedIndex].text : "No seleccionado";
-        } else {
-            const inpMaestro = document.querySelector('input[name="nombre_maestro_externo"]');
-            instructorFinal = inpMaestro ? inpMaestro.value : "Externo / Invitado";
-        }
+        datosRegistro.id_externo = nuevoExterno[0].id_externo;
     }
 
-    const tallaRadio = document.querySelector('input[name="talla"]:checked');
-    const talla = tallaRadio ? tallaRadio.value : "M";
-    const pago = document.getElementsByName('pago')[0].value;
+    // 4. Inserción final en inscripciones_final
+    const { data, error } = await supabase
+        .from('inscripciones_final')
+        .insert([datosRegistro])
+        .select();
 
-    document.getElementById('info-content').innerHTML = `
-        <div style="text-align: left; line-height: 1.6;">
-            <p><strong>Categoría:</strong> <span style="color: #a31d1d; font-weight: bold;"> ${tipoTexto}</span></p>
-            <p><strong>Nombre:</strong> ${nombreFinal}</p>
-            <p><strong>Instructor:</strong> ${instructorFinal}</p>
-            <p><strong>Talla:</strong> ${talla}</p>
-            <p><strong>Pago:</strong> ${pago}</p>
-        </div>
-    `;
-
-    document.getElementById('paso-datos').style.display = 'none';
-    document.getElementById('seccion-resumen').style.display = 'block';
-    window.scrollTo(0, 0);
+    if (error) {
+        alert("Error al registrar: " + error.message);
+    } else {
+        // GUARDAR EL ID PARA EL TICKET
+        const folio = data[0].id_inscripcion;
+        sessionStorage.setItem('folio_real', folio);
+        
+        // Redirigir a tu página con marca personal
+        window.location.href = "confirmacion.html";
+    }
 }
 
-// Funciones Auxiliares
-function ocultarSecciones(arr) { arr.forEach(s => s.style.display = 'none'); }
-function editarDatos() {
-    document.getElementById('paso-datos').style.display = 'block';
-    document.getElementById('seccion-resumen').style.display = 'none';
-}
-function togglePrivacy() {
-    const modal = document.getElementById('privacyModal');
-    modal.style.display = (modal.style.display === 'flex') ? 'none' : 'flex';
-}
-function confirmarAsistenciaFinal() {
-    // Aquí es donde en la Fase 2 pondremos el código de Supabase.
-    // Por ahora, para que tu flujo sea funcional:
-    
-    console.log("Datos listos para enviar a la base de datos...");
-    
-    // Redirigimos manualmente a tu página de confirmación
-    window.location.href = "confirmacion.html";
+// Función auxiliar para convertir CH, M, G a IDs (1, 2, 3...)
+function obtenerIdTalla(abreviatura) {
+    const mapa = { 'CH': 1, 'M': 2, 'G': 3, 'XG': 4 };
+    return mapa[abreviatura];
 }
