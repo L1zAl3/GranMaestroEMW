@@ -58,13 +58,21 @@ function gestionarFlujo() {
             </select>`;
         inputUbicacion.innerHTML = `<input type="text" name="estado_mexico" value="Estado de México" readonly>`;
 
+    } else if (tipo === 'instructor_extranjero') {
+        labelNombre.innerText = "Nombre Completo";
+        inputNombre.innerHTML = `<input type="text" name="nombre_completo" id="nombre_registro" placeholder="Nombre completo" required>`;
+        
+        // CONDICIÓN: Ocultar instructor para Instructores Extranjeros
+        contenedorMaestro.style.display = 'none'; 
+        inputUbicacion.innerHTML = `<input type="text" name="direccion_extranjero" placeholder="Ciudad, País" required>`;
+
     } else {
         // Para externos y extranjeros (se mantiene igual)
         labelNombre.innerText = "Nombre Completo";
         inputNombre.innerHTML = `<input type="text" name="nombre_completo" id="nombre_registro" placeholder="Nombre completo" required>`;
         contenedorMaestro.style.display = 'block';
-        inputMaestro.innerHTML = `<input type="text" name="nombre_maestro_externo" placeholder="Nombre de tu Maestro/Escuela" required>`;
-        inputUbicacion.innerHTML = `<input type="text" name="direccion_extranjero" placeholder="Ciudad / País" required>`;
+        inputMaestro.innerHTML = `<input type="text" name="nombre_maestro_externo" placeholder="Nombre de tu Instructor" required>`;
+        inputUbicacion.innerHTML = `<input type="text" name="direccion_extranjero" placeholder="Ciudad, País" required>`;
     }
 }
 // 3. SISTEMA DE RESUMEN
