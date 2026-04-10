@@ -112,7 +112,7 @@ function mostrarResumen() {
     let resumenHTML = `
         <p><strong>Nombre:</strong> ${nombre}</p>
         <p><strong>Instructor:</strong> ${instructorTxt}</p>
-        <p><strong>Ubicación:</strong> ${ubicacion}</p>
+        <p><strong>Dirección:</strong> ${ubicacion}</p>
         <p><strong>Talla de playera:</strong> ${talla}</p>
         <p><strong>Estatus de pago:</strong> ${pago}</p>
         <hr>
