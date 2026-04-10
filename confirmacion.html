@@ -93,6 +93,17 @@
 .btn-whatsapp:hover {
     background-color: #1ebd5a;
 }
+
+#display-folio {
+    color: #a31d1d; /* Tu rojo de marca */
+    font-size: 3rem;
+    font-weight: bold;
+    letter-spacing: 3px;
+    margin: 20px 0;
+    padding: 10px;
+    border: 2px dashed #ccc; /* Estilo tipo ticket */
+    display: inline-block;
+}
     </style>
 </head>
 <body>
@@ -107,9 +118,18 @@
             <b>Nos vemos en el evento con el Gran Maestro.</b>
         </p>
 
-        <h2> Tu número de folio es: </h2>
+        
         <br>
-        <h1> 1 </h1>
+        <div class="success-card">
+        <!-- Aquí va tu logo y el check de éxito -->
+        <h2>¡REGISTRO EXITOSO!</h2>
+        <p>Tu número de folio es:</p>
+    
+        <!-- Este es el elemento clave que el script va a llenar -->
+        <h1 id="display-folio">---</h1> 
+    
+        <p>Toma una captura de pantalla de este ticket.</p>
+        </div>
         
         <button type="button" class="btn-edit" onclick="window.location.href='index.html';" style="margin-top: 30px;">
             REGISTRAR A OTRA PERSONA
@@ -159,6 +179,20 @@
         </a>
     </div>
     </div>
+    <script>
+    window.onload = function() {
+        // Buscamos el folio que guardamos en la página anterior
+        const folio = sessionStorage.getItem('folio_real');
+        
+        if (folio) {
+            // Si existe, lo mostramos con el formato EMW-0001
+            document.getElementById('display-folio').innerText = "EMW-" + folio.toString().padStart(4, '0');
+        } else {
+            // Si alguien entra directo a la página sin registrarse
+            document.getElementById('display-folio').innerText = "ERROR";
+        }
+    };
+</script>
 
 </body>
     
