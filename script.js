@@ -17,6 +17,7 @@ function gestionarFlujo() {
     const inputNombre = document.getElementById('input-dinamico-nombre');
     const inputMaestro = document.getElementById('input-dinamico-maestro');
     const inputUbicacion = document.getElementById('input-dinamico-ubicacion');
+    const labelNombre = document.getElementById('label-nombre');
 
     if (tipo === "") {
         camposIdentidad.style.display = 'none';
@@ -28,29 +29,44 @@ function gestionarFlujo() {
     camposComunes.style.display = 'block';
     grupoUbicacion.style.display = 'block';
 
-    if (tipo === 'alumno_escuela' || tipo === 'instructor_escuela') {
-        inputNombre.innerHTML = `<input type="text" name="nombre_completo" placeholder="Tu nombre oficial" required>`;
-        if (tipo === 'alumno_escuela') {
-            contenedorMaestro.style.display = 'block';
-            inputMaestro.innerHTML = `
-                <select name="id_instructor_interno" required>
-                    <option value="1">Jesus</option>
-                    <option value="2">Marlene</option>
-                    <option value="3">Rodrigo</option>
-                    <option value="4">Elena</option>
-                </select>`;
-        } else {
-            contenedorMaestro.style.display = 'none';
-        }
+    if (tipo === 'instructor_escuela') {
+        // CAMBIO: El instructor selecciona su nombre de la lista oficial
+        labelNombre.innerText = "Selecciona tu Nombre de Instructor";
+        inputNombre.innerHTML = `
+            <select name="id_instructor_emw" id="nombre_registro" required>
+                <option value="">-- Selecciona tu nombre --</option>
+                <option value="1">Jesus</option>
+                <option value="2">Marlene</option>
+                <option value="3">Rodrigo</option>
+                <option value="4">Elena</option>
+            </select>`;
+        contenedorMaestro.style.display = 'none';
         inputUbicacion.innerHTML = `<input type="text" name="estado_mexico" value="Estado de México" readonly>`;
+
+    } else if (tipo === 'alumno_escuela') {
+        // CAMBIO: El alumno escribe su nombre completo
+        labelNombre.innerText = "Tu Nombre Completo";
+        inputNombre.innerHTML = `<input type="text" name="nombre_completo" id="nombre_registro" placeholder="Como aparecerá en tu diploma" required>`;
+        contenedorMaestro.style.display = 'block';
+        inputMaestro.innerHTML = `
+            <select name="id_instructor_interno" required>
+                <option value="">-- ¿Quién es tu Instructor? --</option>
+                <option value="1">Jesus</option>
+                <option value="2">Marlene</option>
+                <option value="3">Rodrigo</option>
+                <option value="4">Elena</option>
+            </select>`;
+        inputUbicacion.innerHTML = `<input type="text" name="estado_mexico" value="Estado de México" readonly>`;
+
     } else {
-        inputNombre.innerHTML = `<input type="text" name="nombre_completo" placeholder="Nombre completo" required>`;
+        // Para externos y extranjeros (se mantiene igual)
+        labelNombre.innerText = "Nombre Completo";
+        inputNombre.innerHTML = `<input type="text" name="nombre_completo" id="nombre_registro" placeholder="Nombre completo" required>`;
         contenedorMaestro.style.display = 'block';
         inputMaestro.innerHTML = `<input type="text" name="nombre_maestro_externo" placeholder="Nombre de tu Maestro/Escuela" required>`;
         inputUbicacion.innerHTML = `<input type="text" name="direccion_extranjero" placeholder="Ciudad / País" required>`;
     }
 }
-
 // 3. SISTEMA DE RESUMEN
 function mostrarResumen() {
     // Validar que el checkbox de privacidad esté marcado
@@ -101,42 +117,57 @@ async function confirmarAsistenciaFinal() {
     };
 
     // 3. Lógica para asignar IDs según el rol
-    if (tipoUsuario === 'alumno_escuela') {
-        // Aquí deberías tener un sistema para identificar el ID del alumno
-        // Por ahora, si es nuevo, podrías manejar una lógica de inserción previa o simplificada
-        datosRegistro.id_alumno_emw = null; // Ajustar según tu lógica de selección de alumnos
-    } else if (tipoUsuario === 'instructor_escuela') {
-        datosRegistro.id_instructor_emw = document.getElementsByName('id_instructor_interno')[0].value;
-    } else {
-        // Si es externo, primero debemos registrarlo en la tabla personas_externas
-        const { data: nuevoExterno } = await supabase
-            .from('personas_externas')
-            .insert([{
-                nombre_completo: document.getElementsByName('nombre_completo')[0].value,
-                procedencia: document.getElementsByName('estado_mexico')[0]?.value || document.getElementsByName('direccion_extranjero')[0]?.value,
-                rol: tipoUsuario === 'externo_maestro' ? 'Maestro Ext' : 'Alumno Ext'
-            }]).select();
-        
-        datosRegistro.id_externo = nuevoExterno[0].id_externo;
-    }
+    try {
+        if (tipoUsuario === 'instructor_escuela') {
+            // Caso: Instructor local
+            datosRegistro.id_instructor_emw = document.getElementById('nombre_registro').value;
 
-    // 4. Inserción final en inscripciones_final
-    const { data, error } = await supabase
-        .from('inscripciones_final')
-        .insert([datosRegistro])
-        .select();
+        } else if (tipoUsuario === 'alumno_escuela') {
+            // Caso: Alumno local (Se registra en su tabla primero)
+            const { data: nuevoAlumno, error: errAlum } = await supabase
+                .from('alumnos_emw')
+                .insert([{ 
+                    nombre_completo: document.getElementById('nombre_registro').value,
+                    id_instructor_pertenece: document.getElementsByName('id_instructor_interno')[0].value
+                }]).select();
+            
+            if (errAlum) throw errAlum;
+            datosRegistro.id_alumno_emw = nuevoAlumno[0].id_alumno_emw;
 
-    if (error) {
-        alert("Error al registrar: " + error.message);
-    } else {
-        // GUARDAR EL ID PARA EL TICKET
+        } else {
+            // Caso: Externos (Extranjeros, Invitados, Maestros externos)
+            const { data: nuevoExterno, error: errExt } = await supabase
+                .from('personas_externas')
+                .insert([{
+                    nombre_completo: document.getElementById('nombre_registro').value,
+                    procedencia: document.getElementsByName('estado_mexico')[0]?.value || 
+                                 document.getElementsByName('direccion_extranjero')[0]?.value,
+                    rol: tipoUsuario === 'instructor_extranjero' ? 'Maestro Ext' : 
+                         tipoUsuario === 'alumno_extranjero' ? 'Alumno Ext' : 'Invitado'
+                }]).select();
+            
+            if (errExt) throw errExt;
+            datosRegistro.id_externo = nuevoExterno[0].id_externo;
+        }
+
+        // 4. INSERCIÓN FINAL (Lo que tú tenías, pero ahora con los datos ya repartidos)
+        const { data, error } = await supabase
+            .from('inscripciones_final')
+            .insert([datosRegistro])
+            .select();
+
+        if (error) throw error;
+
+        // 5. GENERAR FOLIO Y REDIRIGIR
         const folio = data[0].id_inscripcion;
         sessionStorage.setItem('folio_real', folio);
-        
-        // Redirigir a tu página con marca personal
         window.location.href = "confirmacion.html";
+
+    } catch (err) {
+        console.error("Error completo:", err);
+        alert("Hubo un problema con el registro: " + err.message);
     }
-}
+} // <--- Aquí cierra la función
 
 // Función auxiliar para convertir CH, M, G a IDs (1, 2, 3...)
 function obtenerIdTalla(abreviatura) {
