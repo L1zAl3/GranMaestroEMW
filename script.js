@@ -46,11 +46,11 @@ function gestionarFlujo() {
     } else if (tipo === 'alumno_escuela') {
         // CAMBIO: El alumno escribe su nombre completo
         labelNombre.innerText = "Tu Nombre Completo";
-        inputNombre.innerHTML = `<input type="text" name="nombre_completo" id="nombre_registro" placeholder="Como aparecerá en tu diploma" required>`;
+        inputNombre.innerHTML = `<input type="text" name="nombre_completo" id="nombre_registro" placeholder="Nombre Completo" required>`;
         contenedorMaestro.style.display = 'block';
         inputMaestro.innerHTML = `
             <select name="id_instructor_interno" required>
-                <option value="">-- ¿Quién es tu Instructor? --</option>
+                <option value="">-- Selecciona tu Instructor --</option>
                 <option value="1">Jesus</option>
                 <option value="2">Marlene</option>
                 <option value="3">Rodrigo</option>
@@ -69,37 +69,59 @@ function gestionarFlujo() {
 }
 // 3. SISTEMA DE RESUMEN
 function mostrarResumen() {
-    // Validar que el checkbox de privacidad esté marcado
+    // 1. Validaciones iniciales
     if (!document.getElementById('acepto-privacidad').checked) {
         alert("Debes aceptar el aviso de privacidad.");
         return;
     }
 
-    const nombre = document.getElementsByName('nombre_completo')[0].value;
+    // 2. Captura de datos básicos
+    const nombre = document.getElementById('nombre_registro').value;
+    const tipo = document.getElementById('tipo-usuario').value;
     const talla = document.querySelector('input[name="talla"]:checked').value;
     const pago = document.getElementsByName('pago')[0].value;
+
+    // 3. Captura de datos dinámicos (Instructor y Ubicación)
+    let instructorTxt = "";
+    if (tipo === 'alumno_escuela') {
+        const sel = document.getElementsByName('id_instructor_interno')[0];
+        instructorTxt = sel.options[sel.selectedIndex].text;
+    } else if (tipo === 'instructor_escuela') {
+        instructorTxt = "Registro de Instructor";
+    } else {
+        instructorTxt = document.getElementsByName('nombre_maestro_externo')[0]?.value || "N/A";
+    }
+
+    const ubicacion = document.getElementsByName('estado_mexico')[0]?.value || 
+                      document.getElementsByName('direccion_extranjero')[0]?.value || "No especificada";
 
     if (!nombre) {
         alert("Por favor, ingresa tu nombre.");
         return;
     }
 
+    // 4. Construcción del HTML en el orden solicitado
     let resumenHTML = `
-        <p><strong>Participante:</strong> ${nombre}</p>
+        <p><strong>Nombre:</strong> ${nombre}</p>
+        <p><strong>Instructor:</strong> ${instructorTxt}</p>
+        <p><strong>Ubicación:</strong> ${ubicacion}</p>
         <p><strong>Talla de playera:</strong> ${talla}</p>
         <p><strong>Estatus de pago:</strong> ${pago}</p>
         <hr>
-        <p style="font-size: 0.9em; color: #666;">Al confirmar, tus datos se enviarán a la base de datos oficial de EMW.</p>
+        <p style="font-size: 0.9em; color: #666; font-style: italic;">
+            "Confirma que tus datos sean correctos para finalizar tu registro de guerrero."
+        </p>
     `;
 
+    // 5. Mostrar en pantalla
     document.getElementById('info-content').innerHTML = resumenHTML;
     document.getElementById('paso-datos').style.display = 'none';
     document.getElementById('seccion-resumen').style.display = 'block';
 }
-
-function editarDatos() {
-    document.getElementById('paso-datos').style.display = 'block';
-    document.getElementById('seccion-resumen').style.display = 'none';
+    //6. Editar datos 
+    function editarDatos() {
+        document.getElementById('paso-datos').style.display = 'block';
+        document.getElementById('seccion-resumen').style.display = 'none';
 }
 
 // 4. ENVÍO FINAL A SUPABASE
