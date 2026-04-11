@@ -6,6 +6,25 @@ const supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
 /**
  * Este script controla qué campos ve el usuario según su rol.
  */
+//1. cargar instructores
+async function cargarInstructores() {
+    const { data: instructores, error } = await supabaseClient
+        .from('instructores_emw')
+        .select('id_instructor, nombre_oficial')
+        .order('nombre_oficial', { ascending: true });
+
+    if (error) {
+        console.error("Error cargando instructores:", error);
+        return "";
+    }
+
+    // Generamos las opciones dinámicamente
+    let opciones = '<option value="">-- Selecciona una opción --</option>';
+    instructores.forEach(ins => {
+        opciones += `<option value="${ins.id_instructor}">${ins.nombre_oficial}</option>`;
+    });
+    return opciones;
+}
 // 2. GESTIÓN DEL FLUJO (Hace que aparezcan las preguntas)
 function gestionarFlujo() {
     const tipo = document.getElementById('tipo-usuario').value;
@@ -30,33 +49,20 @@ function gestionarFlujo() {
     grupoUbicacion.style.display = 'block';
 
     if (tipo === 'instructor_escuela') {
-        // CAMBIO: El instructor selecciona su nombre de la lista oficial
-        labelNombre.innerText = "Selecciona tu Nombre de Instructor";
-        inputNombre.innerHTML = `
-            <select name="id_instructor_emw" id="nombre_registro" required>
-                <option value="">-- Selecciona tu nombre --</option>
-                <option value="1">Jesus</option>
-                <option value="2">Marlene</option>
-                <option value="3">Rodrigo</option>
-                <option value="4">Elena</option>
-            </select>`;
+        labelNombre.innerText = "Selecciona tu Nombre";
+        // Llamamos a la base de datos
+        const opciones = await cargarInstructores();
+        inputNombre.innerHTML = `<select name="id_instructor_emw" id="nombre_registro" required>${opciones}</select>`;
         contenedorMaestro.style.display = 'none';
-        inputUbicacion.innerHTML = `<input type="text" name="estado_mexico" value="Estado de México" readonly>`;
-
+        
     } else if (tipo === 'alumno_escuela') {
-        // CAMBIO: El alumno escribe su nombre completo
         labelNombre.innerText = "Tu Nombre Completo";
-        inputNombre.innerHTML = `<input type="text" name="nombre_completo" id="nombre_registro" placeholder="Nombre Completo" required>`;
+        inputNombre.innerHTML = `<input type="text" name="nombre_completo" id="nombre_registro" required>`;
         contenedorMaestro.style.display = 'block';
-        inputMaestro.innerHTML = `
-            <select name="id_instructor_interno" required>
-                <option value="">-- Selecciona tu Instructor --</option>
-                <option value="1">Jesus</option>
-                <option value="2">Marlene</option>
-                <option value="3">Rodrigo</option>
-                <option value="4">Elena</option>
-            </select>`;
-        inputUbicacion.innerHTML = `<input type="text" name="estado_mexico" value="Estado de México" readonly>`;
+        // Llamamos a la base de datos aquí también
+        const opciones = await cargarInstructores();
+        inputMaestro.innerHTML = `<select name="id_instructor_interno" required>${opciones}</select>`;
+    }
 
     } else if (tipo === 'instructor_extranjero') {
         labelNombre.innerText = "Nombre Completo";
