@@ -2,7 +2,7 @@
 // Configuración de conexión con Supabase
 const supabaseUrl = 'https://zvtwlgfzfoouxbhnpwwr.supabase.co';
 const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp2dHdsZ2Z6Zm9vdXhiaG5wd3dyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUxOTM1MDksImV4cCI6MjA5MDc2OTUwOX0._AbrD6Pv0iR1EfHboRAi1mla-V78lfKyb-knuMYszt8';
-const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 /**
  * Este script controla qué campos ve el usuario según su rol.
  */
@@ -154,8 +154,7 @@ async function confirmarAsistenciaFinal() {
 
         } else if (tipoUsuario === 'alumno_escuela') {
             // Caso: Alumno local (Se registra en su tabla primero)
-            const { data: nuevoAlumno, error: errAlum } = await supabase
-                .from('alumnos_emw')
+            const { data: nuevoAlumno, error: errAlum } = await supabaseClient.from('alumnos_emw')
                 .insert([{ 
                     nombre_completo: document.getElementById('nombre_registro').value,
                     id_instructor_pertenece: document.getElementsByName('id_instructor_interno')[0].value
@@ -166,8 +165,7 @@ async function confirmarAsistenciaFinal() {
 
         } else {
             // Caso: Externos (Extranjeros, Invitados, Maestros externos)
-            const { data: nuevoExterno, error: errExt } = await supabase
-                .from('personas_externas')
+            const { data: nuevoExterno, error: errExt } = await supabaseClient.from('personas_externas')
                 .insert([{
                     nombre_completo: document.getElementById('nombre_registro').value,
                     procedencia: document.getElementsByName('estado_mexico')[0]?.value || 
@@ -181,7 +179,7 @@ async function confirmarAsistenciaFinal() {
         }
 
         // 4. INSERCIÓN FINAL (Lo que tú tenías, pero ahora con los datos ya repartidos)
-        const { data, error } = await supabase
+        const { data, error } = await supabaseClient
             .from('inscripciones_final')
             .insert([datosRegistro])
             .select();
