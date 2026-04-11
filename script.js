@@ -10,7 +10,7 @@ const supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
 async function cargarInstructores() {
     const { data: instructores, error } = await supabaseClient
         .from('instructores_emw')
-        .select('id_instructor, nombre_oficial')
+        .select('id_instructor, nombre_oficial, estado')
         .order('nombre_oficial', { ascending: true });
 
     if (error) {
@@ -97,42 +97,56 @@ function mostrarResumen() {
     }
 
     // 2. Captura de datos básicos
-    const nombre = document.getElementById('nombre_registro').value;
     const tipo = document.getElementById('tipo-usuario').value;
-    const talla = document.querySelector('input[name="talla"]:checked').value;
-    const pago = document.getElementsByName('pago')[0].value;
+const talla = document.querySelector('input[name="talla"]:checked').value;
+const pago = document.getElementsByName('pago')[0].value;
 
-    // 3. Captura de datos dinámicos (Instructor y Ubicación)
-    let instructorTxt = "";
-    if (tipo === 'alumno_escuela') {
-        const sel = document.getElementsByName('id_instructor_interno')[0];
-        instructorTxt = sel.options[sel.selectedIndex].text;
-    } else if (tipo === 'instructor_escuela') {
-        instructorTxt = "Registro de Instructor";
-    } else {
-        instructorTxt = document.getElementsByName('nombre_maestro_externo')[0]?.value || "N/A";
-    }
+let nombreMostrado = "";
+let ubicacion = "";
+    
+// Lógica para capturar el NOMBRE real y no el ID
+if (tipo === 'instructor_escuela') {
+    const selNombre = document.getElementById('nombre_registro');
+    // Esto saca el TEXTO (ej: Luciano) en lugar del VALUE (ej: 2)
+    nombreMostrado = selNombre.options[selNombre.selectedIndex].text;
+    // Leemos el estado que viene desde la base de datos para ese instructor
+    ubicacion = sel.options[sel.selectedIndex].getAttribute('data-estado') || "Estado de México";
+} else {
+    // Para los demás que sí escriben su nombre en un input
+    nombreMostrado = document.getElementById('nombre_registro').value;
+}
 
-    const ubicacion = document.getElementsByName('estado_mexico')[0]?.value || 
-                      document.getElementsByName('direccion_extranjero')[0]?.value || "No especificada";
+// 3. Captura de datos dinámicos (Instructor y Ubicación)
+let instructorTxt = "";
+if (tipo === 'alumno_escuela') {
+    const sel = document.getElementsByName('id_instructor_interno')[0];
+    instructorTxt = sel.options[sel.selectedIndex].text;
+} else if (tipo === 'instructor_escuela') {
+    instructorTxt = "Registro de Instructor"; // O puedes poner "Personal de EMW"
+} else {
+    instructorTxt = document.getElementsByName('nombre_maestro_externo')[0]?.value || "N/A";
+}
 
-    if (!nombre) {
-        alert("Por favor, ingresa tu nombre.");
-        return;
-    }
+const ubicacion = document.getElementsByName('estado_mexico')[0]?.value || 
+                  document.getElementsByName('direccion_extranjero')[0]?.value || "No especificada";
 
-    // 4. Construcción del HTML en el orden solicitado
-    let resumenHTML = `
-        <p><strong>Nombre:</strong> ${nombre}</p>
-        <p><strong>Instructor:</strong> ${instructorTxt}</p>
-        <p><strong>Dirección:</strong> ${ubicacion}</p>
-        <p><strong>Talla de playera:</strong> ${talla}</p>
-        <p><strong>Estatus de pago:</strong> ${pago}</p>
-        <hr>
-        <p style="font-size: 0.9em; color: #666; font-style: italic;">
-            "Confirma que tus datos sean correctos para finalizar tu registro de guerrero."
-        </p>
-    `;
+if (!nombreMostrado || nombreMostrado === "-- Selecciona tu nombre --") {
+    alert("Por favor, selecciona o ingresa tu nombre.");
+    return;
+}
+
+// 4. Construcción del HTML (Usando nombreMostrado)
+let resumenHTML = `
+    <p><strong>Nombre:</strong> ${nombreMostrado}</p>
+    <p><strong>Instructor:</strong> ${instructorTxt}</p>
+    <p><strong>Dirección:</strong> ${ubicacion}</p>
+    <p><strong>Talla de playera:</strong> ${talla}</p>
+    <p><strong>Estatus de pago:</strong> ${pago}</p>
+    <hr>
+    <p style="font-size: 0.9em; color: #666; font-style: italic;">
+        "Confirma que tus datos sean correctos para finalizar tu registro de guerrero."
+    </p>
+`;
 
     // 5. Mostrar en pantalla
     document.getElementById('info-content').innerHTML = resumenHTML;
