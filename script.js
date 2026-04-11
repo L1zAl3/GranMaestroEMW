@@ -139,7 +139,7 @@ function mostrarResumen() {
         <p><strong>Estatus de pago:</strong> ${pago}</p>
         <hr>
         <p style="font-size: 0.9em; color: #666; font-style: italic;">
-            "Confirma que tus datos sean correctos para finalizar tu registro de guerrero."
+            "Confirma que tus datos sean correctos para finalizar tu registro."
         </p>
     `;
 
