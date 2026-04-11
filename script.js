@@ -59,11 +59,15 @@ async function gestionarFlujo() {
 
     } else if (tipo === 'alumno_escuela') {
         labelNombre.innerText = "Tu Nombre Completo";
-        inputNombre.innerHTML = `<input type="text" name="nombre_completo" id="nombre_registro" placeholder="Nombre completo" required>`;
+        inputNombre.innerHTML = `<input type="text" name="nombre_completo" id="nombre_registro" placeholder="Como aparecerá en tu diploma" required>`;
         contenedorMaestro.style.display = 'block';
         inputMaestro.innerHTML = `<select name="id_instructor_interno" id="maestro_seleccionado" required>${opcionesDocentes}</select>`;
-        grupoUbicacion.style.display = 'none'; 
-        inputUbicacion.innerHTML = `<input type="hidden" name="estado_mexico" value="Estado de México">`;
+        
+        // CAMBIO: Ahora el alumno SÍ puede escribir su dirección/estado
+        grupoUbicacion.style.display = 'block'; 
+        inputUbicacion.innerHTML = `<input type="text" name="estado_mexico" placeholder="Estado o Ciudad de origen" required>`;
+
+    }
 
     } else if (tipo === 'instructor_extranjero') {
         labelNombre.innerText = "Nombre Completo";
@@ -98,20 +102,28 @@ function mostrarResumen() {
     let instructorTxt = "";
 
     // Lógica para capturar NOMBRE y UBICACIÓN dinámica
+    // Lógica para capturar NOMBRE y UBICACIÓN
     if (tipo === 'instructor_escuela') {
         const sel = document.getElementById('nombre_registro');
         nombreMostrado = sel.options[sel.selectedIndex].text;
+        // El instructor sigue usando su estado de la base de datos (puedes cambiarlo si prefieres que también escriba)
         ubicacionFinal = sel.options[sel.selectedIndex].getAttribute('data-estado') || "Estado de México";
         instructorTxt = "Registro de Instructor";
-    } else if (tipo === 'alumno_escuela') {
-        nombreMostrado = document.getElementById('nombre_registro').value;
-        const selM = document.getElementById('maestro_seleccionado');
-        instructorTxt = selM.options[selM.selectedIndex].text;
-        ubicacionFinal = selM.options[selM.selectedIndex].getAttribute('data-estado') || "Estado de México";
     } else {
+        // Para Alumnos (Escuela/Ext) e Invitados
         nombreMostrado = document.getElementById('nombre_registro').value;
-        instructorTxt = document.getElementsByName('nombre_maestro_externo')[0]?.value || "N/A";
-        ubicacionFinal = document.getElementsByName('direccion_extranjero')[0]?.value || "No especificada";
+        
+        // Capturamos lo que el alumno escribió en el campo de ubicación
+        ubicacionFinal = document.getElementsByName('estado_mexico')[0]?.value || 
+                         document.getElementsByName('direccion_extranjero')[0]?.value || 
+                         "No especificada";
+
+        if (tipo === 'alumno_escuela') {
+            const selM = document.getElementById('maestro_seleccionado');
+            instructorTxt = selM.options[selM.selectedIndex].text;
+        } else {
+            instructorTxt = document.getElementsByName('nombre_maestro_externo')[0]?.value || "N/A";
+        }
     }
 
     if (!nombreMostrado || nombreMostrado.includes("-- Selecciona")) {
