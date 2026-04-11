@@ -25,10 +25,10 @@ async function cargarInstructores() {
     });
     return opciones;
 }
-// 2. GESTIÓN DEL FLUJO (Hace que aparezcan las preguntas)
-function gestionarFlujo() {
+// 2. GESTIÓN DEL FLUJO DINÁMICO (Corregida)
+async function gestionarFlujo() {
     const tipo = document.getElementById('tipo-usuario').value;
-    const camposIdentidad = document.getElementById('campos-identidad');
+    const camposIdentidad = document.getElementById('campos-identity'); // Asegura que el ID coincida con tu HTML
     const camposComunes = document.getElementById('campos-comunes');
     const grupoUbicacion = document.getElementById('grupo-ubicacion');
     const contenedorMaestro = document.getElementById('contenedor-maestro');
@@ -38,46 +38,53 @@ function gestionarFlujo() {
     const inputUbicacion = document.getElementById('input-dinamico-ubicacion');
     const labelNombre = document.getElementById('label-nombre');
 
+    // Referencias a los contenedores principales
+    const divIdentidad = document.getElementById('campos-identidad');
+
     if (tipo === "") {
-        camposIdentidad.style.display = 'none';
+        divIdentidad.style.display = 'none';
         camposComunes.style.display = 'none';
         return;
     }
 
-    camposIdentidad.style.display = 'block';
+    divIdentidad.style.display = 'block';
     camposComunes.style.display = 'block';
-    grupoUbicacion.style.display = 'block';
+
+    // Traemos los nombres de la DB una sola vez para usarlos si es necesario
+    let opcionesDocentes = "";
+    if (tipo === 'instructor_escuela' || tipo === 'alumno_escuela') {
+        opcionesDocentes = await cargarInstructores();
+    }
 
     if (tipo === 'instructor_escuela') {
         labelNombre.innerText = "Selecciona tu Nombre";
-        // Llamamos a la base de datos
-        const opciones = await cargarInstructores();
-        inputNombre.innerHTML = `<select name="id_instructor_emw" id="nombre_registro" required>${opciones}</select>`;
+        inputNombre.innerHTML = `<select name="id_instructor_emw" id="nombre_registro" required>${opcionesDocentes}</select>`;
         contenedorMaestro.style.display = 'none';
-        
+        grupoUbicacion.style.display = 'none'; // Quitamos ubicación para ellos
+        inputUbicacion.innerHTML = `<input type="hidden" name="estado_mexico" value="Estado de México">`;
+
     } else if (tipo === 'alumno_escuela') {
         labelNombre.innerText = "Tu Nombre Completo";
-        inputNombre.innerHTML = `<input type="text" name="nombre_completo" id="nombre_registro" required>`;
+        inputNombre.innerHTML = `<input type="text" name="nombre_completo" id="nombre_registro" placeholder="Escribe tu nombre" required>`;
         contenedorMaestro.style.display = 'block';
-        // Llamamos a la base de datos aquí también
-        const opciones = await cargarInstructores();
-        inputMaestro.innerHTML = `<select name="id_instructor_interno" required>${opciones}</select>`;
-    }
+        inputMaestro.innerHTML = `<select name="id_instructor_interno" required>${opcionesDocentes}</select>`;
+        grupoUbicacion.style.display = 'none'; // También automático para alumnos locales
+        inputUbicacion.innerHTML = `<input type="hidden" name="estado_mexico" value="Estado de México">`;
 
     } else if (tipo === 'instructor_extranjero') {
         labelNombre.innerText = "Nombre Completo";
-        inputNombre.innerHTML = `<input type="text" name="nombre_completo" id="nombre_registro" placeholder="Nombre completo" required>`;
-        
-        // CONDICIÓN: Ocultar instructor para Instructores Extranjeros
+        inputNombre.innerHTML = `<input type="text" name="nombre_completo" id="nombre_registro" required>`;
         contenedorMaestro.style.display = 'none'; 
+        grupoUbicacion.style.display = 'block';
         inputUbicacion.innerHTML = `<input type="text" name="direccion_extranjero" placeholder="Ciudad, País" required>`;
 
     } else {
-        // Para externos y extranjeros (se mantiene igual)
+        // Alumnos extranjeros / Invitados
         labelNombre.innerText = "Nombre Completo";
-        inputNombre.innerHTML = `<input type="text" name="nombre_completo" id="nombre_registro" placeholder="Nombre completo" required>`;
+        inputNombre.innerHTML = `<input type="text" name="nombre_completo" id="nombre_registro" required>`;
         contenedorMaestro.style.display = 'block';
-        inputMaestro.innerHTML = `<input type="text" name="nombre_maestro_externo" placeholder="Nombre de tu Instructor" required>`;
+        inputMaestro.innerHTML = `<input type="text" name="nombre_maestro_externo" placeholder="Nombre de tu Instructor/Escuela" required>`;
+        grupoUbicacion.style.display = 'block';
         inputUbicacion.innerHTML = `<input type="text" name="direccion_extranjero" placeholder="Ciudad, País" required>`;
     }
 }
