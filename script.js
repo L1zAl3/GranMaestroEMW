@@ -67,7 +67,6 @@ async function gestionarFlujo() {
         grupoUbicacion.style.display = 'block'; 
         inputUbicacion.innerHTML = `<input type="text" name="estado_mexico" placeholder="Estado o Ciudad de origen" required>`;
 
-    }
 
     } else if (tipo === 'instructor_extranjero') {
         labelNombre.innerText = "Nombre Completo";
