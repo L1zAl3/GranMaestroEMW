@@ -72,7 +72,7 @@ async function gestionarFlujo() {
             <option value="Yucatán">Yucatán</option>
             <option value="Zacatecas">Zacatecas</option>
             <option value="Otro">Otro (Especificar en nombre)</option>
-    const listaEstados = `
+
 
         </select>`;
 
