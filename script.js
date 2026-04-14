@@ -99,7 +99,7 @@ async function gestionarFlujo() {
 
     } else if (tipo === 'alumno_escuela') {
         labelNombre.innerText = "Tu Nombre Completo";
-        inputNombre.innerHTML = `<input type="text" name="nombre_completo" id="nombre_registro" placeholder="Como aparecerá en tu diploma" required>`;
+        inputNombre.innerHTML = `<input type="text" name="nombre_completo" id="nombre_registro" placeholder="Nombre completo" required>`;
         contenedorMaestro.style.display = 'block';
         inputMaestro.innerHTML = `<select name="id_instructor_interno" id="maestro_seleccionado" required>${opcionesDocentes}</select>`;
 
@@ -113,7 +113,7 @@ async function gestionarFlujo() {
         inputNombre.innerHTML = `<input type="text" name="nombre_completo" id="nombre_registro" placeholder="Nombre completo" required>`;
         contenedorMaestro.style.display = 'none'; 
         grupoUbicacion.style.display = 'block';
-        inputUbicacion.innerHTML = `<input type="text" name="direccion_extranjero" placeholder="Ciudad, País" required>`;
+        inputUbicacion.innerHTML = `<input type="text" name="direccion_extranjero" placeholder="Estado o Ciudad, País" required>`;
 
     } else {
         labelNombre.innerText = "Nombre Completo";
