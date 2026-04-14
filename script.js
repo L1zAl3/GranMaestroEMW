@@ -36,6 +36,17 @@ async function gestionarFlujo() {
     const inputUbicacion = document.getElementById('input-dinamico-ubicacion');
     const labelNombre = document.getElementById('label-nombre');
 
+    const listaEstados = `
+        <select name="estado_mexico" required>
+            <option value="Estado de México">Estado de México</option>
+            <option value="Ciudad de México">Ciudad de México</option>
+            <option value="Hidalgo">Hidalgo</option>
+            <option value="Puebla">Puebla</option>
+            <option value="Morelos">Morelos</option>
+            <option value="Querétaro">Querétaro</option>
+            <option value="Otro">Otro Estado de México</option>
+        </select>`;
+
     if (tipo === "") {
         divIdentidad.style.display = 'none';
         camposComunes.style.display = 'none';
@@ -62,10 +73,10 @@ async function gestionarFlujo() {
         inputNombre.innerHTML = `<input type="text" name="nombre_completo" id="nombre_registro" placeholder="Como aparecerá en tu diploma" required>`;
         contenedorMaestro.style.display = 'block';
         inputMaestro.innerHTML = `<select name="id_instructor_interno" id="maestro_seleccionado" required>${opcionesDocentes}</select>`;
-        
-        // CAMBIO: Ahora el alumno SÍ puede escribir su dirección/estado
+
+        // El alumno selecciona su estado de la lista
         grupoUbicacion.style.display = 'block'; 
-        inputUbicacion.innerHTML = `<input type="text" name="estado_mexico" placeholder="Estado o Ciudad de origen" required>`;
+        inputUbicacion.innerHTML = listaEstados;
 
 
     } else if (tipo === 'instructor_extranjero') {
@@ -95,13 +106,23 @@ function mostrarResumen() {
     const tipo = document.getElementById('tipo-usuario').value;
     const talla = document.querySelector('input[name="talla"]:checked').value;
     const pago = document.getElementsByName('pago')[0].value;
+    // REVISIÓN: Priorizamos el select de México, si no existe, usamos el texto de extranjero
+    const campoEstadoMexico = document.getElementsByName('estado_mexico')[0];
+    const campoDireccionExt = document.getElementsByName('direccion_extranjero')[0];
 
     let nombreMostrado = "";
     let ubicacionFinal = "";
     let instructorTxt = "";
 
+    if (campoEstadoMexico) {
+            ubicacionFinal = campoEstadoMexico.value;
+        } else if (campoDireccionExt) {
+            ubicacionFinal = campoDireccionExt.value;
+        } else {
+            ubicacionFinal = "No especificada";
+        }
+    
     // Lógica para capturar NOMBRE y UBICACIÓN dinámica
-    // Lógica para capturar NOMBRE y UBICACIÓN
     if (tipo === 'instructor_escuela') {
         const sel = document.getElementById('nombre_registro');
         nombreMostrado = sel.options[sel.selectedIndex].text;
@@ -117,9 +138,11 @@ function mostrarResumen() {
                          document.getElementsByName('direccion_extranjero')[0]?.value || 
                          "No especificada";
 
+
         if (tipo === 'alumno_escuela') {
             const selM = document.getElementById('maestro_seleccionado');
             instructorTxt = selM.options[selM.selectedIndex].text;
+            
         } else {
             instructorTxt = document.getElementsByName('nombre_maestro_externo')[0]?.value || "N/A";
         }
@@ -171,11 +194,18 @@ async function confirmarAsistenciaFinal() {
             }]).select();
             if (errAl) throw errAl;
             datosRegistro.id_alumno_emw = nuevoAl[0].id_alumno_emw;
+            
         } else {
+            // Buscamos el valor en cualquiera de los dos campos posibles
+            const procedenciaFinal = document.getElementsByName('estado_mexico')[0]?.value || 
+                                   document.getElementsByName('direccion_extranjero')[0]?.value || 
+                                   "Estado de México";
+            //mostrar lo obtenido
             const { data: nuevoExt, error: errExt } = await supabaseClient.from('personas_externas').insert([{
                 nombre_completo: document.getElementById('nombre_registro').value,
-                procedencia: document.getElementsByName('direccion_extranjero')[0]?.value || "Estado de México",
-                rol: tipoUsuario === 'instructor_extranjero' ? 'Maestro Ext' : 'Alumno Ext'
+                procedencia: procedenciaFinal, // <--- AHORA SÍ USA LA VARIABLE
+                rol: tipoUsuario === 'instructor_extranjero' ? 'Maestro Ext' : 
+                     tipoUsuario === 'alumno_extranjero' ? 'Alumno Ext' : 'Invitado'
             }]).select();
             if (errExt) throw errExt;
             datosRegistro.id_externo = nuevoExt[0].id_externo;
