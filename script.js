@@ -217,13 +217,30 @@ async function confirmarAsistenciaFinal() {
         if (tipoUsuario === 'instructor_escuela') {
             datosRegistro.id_instructor_emw = document.getElementById('nombre_registro').value;
         } else if (tipoUsuario === 'alumno_escuela') {
-            const { data: nuevoAl, error: errAl } = await supabaseClient.from('alumnos_emw').insert([{ 
-                nombre_completo: document.getElementById('nombre_registro').value,
-                id_instructor_pertenece: document.getElementById('maestro_seleccionado').value
-            }]).select();
-            if (errAl) throw errAl;
-            datosRegistro.id_alumno_emw = nuevoAl[0].id_alumno_emw;
-            
+    // 1. Capturamos los valores dinámicos del formulario
+    const nombreFormulario = document.getElementById('nombre_registro').value;
+    const idMaestroSelect = document.getElementById('maestro_seleccionado').value;
+
+    // 2. Validación de seguridad antes de enviar
+    if (!idMaestroSelect) {
+        alert("Por favor, selecciona a tu instructor.");
+        return;
+    }
+
+    // 3. Inserción limpia
+    const { data: nuevoAl, error: errAl } = await supabaseClient
+        .from('alumnos_emw')
+        .insert([{ 
+            nombre_completo: nombreFormulario,
+            // Convertimos a número entero para que coincida con el tipo 'entero4' de tu DB
+            id_instructor_pertenece: parseInt(idMaestroSelect) 
+        }])
+        .select();
+
+    if (errAl) throw errAl;
+    datosRegistro.id_alumno_emw = nuevoAl[0].id_alumno_emw;
+
+        
         } else {
             // Buscamos el valor en cualquiera de los dos campos posibles
             const procedenciaFinal = document.getElementsByName('estado_mexico')[0]?.value || 
