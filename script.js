@@ -97,18 +97,18 @@ async function gestionarFlujo() {
         grupoUbicacion.style.display = 'none'; 
         inputUbicacion.innerHTML = `<input type="hidden" name="estado_mexico" value="Estado de México">`;
 
-    } else if (tipo === 'alumno_escuela') {
-        labelNombre.innerText = "Tu Nombre Completo";
-        inputNombre.innerHTML = `<input type="text" name="nombre_completo" id="nombre_registro" placeholder="Nombre completo" required>`;
-        contenedorMaestro.style.display = 'block';
-        inputMaestro.innerHTML = `<select name="id_instructor_interno" id="maestro_seleccionado" required>${opcionesDocentes}</select>`;
-
-        // El alumno selecciona su estado de la lista
-        grupoUbicacion.style.display = 'block'; 
-        inputUbicacion.innerHTML = listaEstados;
-
-
-    } else if (tipo === 'instructor_extranjero') {
+    } // Dentro de gestionarFlujo()
+} else if (tipo === 'alumno_escuela') {
+    labelNombre.innerText = "Tu Nombre Completo";
+    inputNombre.innerHTML = `<input type="text" name="nombre_completo" id="nombre_registro" placeholder="Nombre completo" required>`;
+    contenedorMaestro.style.display = 'block';
+    
+    // IMPORTANTE: Aquí agregamos el id="maestro_seleccionado" al select
+    inputMaestro.innerHTML = `<select name="id_instructor_interno" id="maestro_seleccionado" required>${opcionesDocentes}</select>`;
+    
+    grupoUbicacion.style.display = 'block'; 
+    inputUbicacion.innerHTML = listaEstados;
+} else if (tipo === 'instructor_extranjero') {
         labelNombre.innerText = "Nombre Completo";
         inputNombre.innerHTML = `<input type="text" name="nombre_completo" id="nombre_registro" placeholder="Nombre completo" required>`;
         contenedorMaestro.style.display = 'none'; 
@@ -216,16 +216,27 @@ async function confirmarAsistenciaFinal() {
     try {
         if (tipoUsuario === 'instructor_escuela') {
             datosRegistro.id_instructor_emw = document.getElementById('nombre_registro').value;
-        } else if (tipoUsuario === 'alumno_escuela') {
-    // 1. Capturamos los valores dinámicos del formulario
-    const nombreFormulario = document.getElementById('nombre_registro').value;
-    const idMaestroSelect = document.getElementById('maestro_seleccionado').value;
-
-    // 2. Validación de seguridad antes de enviar
-    if (!idMaestroSelect) {
+        }// Dentro de confirmarAsistenciaFinal()
+} else if (tipoUsuario === 'alumno_escuela') {
+    const nombreAlumno = document.getElementById('nombre_registro').value;
+    const comboMaestro = document.getElementById('maestro_seleccionado'); // <--- Ahora sí lo encontrará
+    
+    if (!comboMaestro || !comboMaestro.value) {
         alert("Por favor, selecciona a tu instructor.");
         return;
     }
+
+    const { data: nuevoAl, error: errAl } = await supabaseClient
+        .from('alumnos_emw')
+        .insert([{ 
+            nombre_completo: nombreAlumno,
+            id_instructor_pertenece: parseInt(comboMaestro.value) 
+        }])
+        .select();
+    
+    if (errAl) throw errAl;
+    datosRegistro.id_alumno_emw = nuevoAl[0].id_alumno_emw;
+}
 
     // 3. Inserción limpia
     const { data: nuevoAl, error: errAl } = await supabaseClient
