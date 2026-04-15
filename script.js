@@ -17,7 +17,6 @@ async function cargarInstructores() {
 
     let opciones = '<option value="">-- Selecciona una opción --</option>';
     instructores.forEach(ins => {
-        // Guardamos el estado en un atributo data-estado para leerlo luego
         opciones += `<option value="${ins.id_instructor}" data-estado="${ins.estado}">${ins.nombre_oficial}</option>`;
     });
     return opciones;
@@ -71,9 +70,7 @@ async function gestionarFlujo() {
             <option value="Veracruz">Veracruz</option>
             <option value="Yucatán">Yucatán</option>
             <option value="Zacatecas">Zacatecas</option>
-            <option value="Otro">Otro (Especificar en nombre)</option>
-
-
+            
         </select>`;
 
     if (tipo === "") {
@@ -97,18 +94,15 @@ async function gestionarFlujo() {
         grupoUbicacion.style.display = 'none'; 
         inputUbicacion.innerHTML = `<input type="hidden" name="estado_mexico" value="Estado de México">`;
 
-    } // Dentro de gestionarFlujo()
-} else if (tipo === 'alumno_escuela') {
-    labelNombre.innerText = "Tu Nombre Completo";
-    inputNombre.innerHTML = `<input type="text" name="nombre_completo" id="nombre_registro" placeholder="Nombre completo" required>`;
-    contenedorMaestro.style.display = 'block';
-    
-    // IMPORTANTE: Aquí agregamos el id="maestro_seleccionado" al select
-    inputMaestro.innerHTML = `<select name="id_instructor_interno" id="maestro_seleccionado" required>${opcionesDocentes}</select>`;
-    
-    grupoUbicacion.style.display = 'block'; 
-    inputUbicacion.innerHTML = listaEstados;
-} else if (tipo === 'instructor_extranjero') {
+    } else if (tipo === 'alumno_escuela') {
+        labelNombre.innerText = "Tu Nombre Completo";
+        inputNombre.innerHTML = `<input type="text" name="nombre_completo" id="nombre_registro" placeholder="Nombre completo" required>`;
+        contenedorMaestro.style.display = 'block';
+        inputMaestro.innerHTML = `<select name="id_instructor_interno" id="maestro_seleccionado" required>${opcionesDocentes}</select>`;
+        grupoUbicacion.style.display = 'block'; 
+        inputUbicacion.innerHTML = listaEstados;
+
+    } else if (tipo === 'instructor_extranjero') {
         labelNombre.innerText = "Nombre Completo";
         inputNombre.innerHTML = `<input type="text" name="nombre_completo" id="nombre_registro" placeholder="Nombre completo" required>`;
         contenedorMaestro.style.display = 'none'; 
@@ -135,43 +129,29 @@ function mostrarResumen() {
     const tipo = document.getElementById('tipo-usuario').value;
     const talla = document.querySelector('input[name="talla"]:checked').value;
     const pago = document.getElementsByName('pago')[0].value;
-    // REVISIÓN: Priorizamos el select de México, si no existe, usamos el texto de extranjero
-    const campoEstadoMexico = document.getElementsByName('estado_mexico')[0];
-    const campoDireccionExt = document.getElementsByName('direccion_extranjero')[0];
 
     let nombreMostrado = "";
     let ubicacionFinal = "";
     let instructorTxt = "";
 
-    if (campoEstadoMexico) {
-            ubicacionFinal = campoEstadoMexico.value;
-        } else if (campoDireccionExt) {
-            ubicacionFinal = campoDireccionExt.value;
-        } else {
-            ubicacionFinal = "No especificada";
-        }
+    // Lógica para capturar UBICACIÓN
+    ubicacionFinal = document.getElementsByName('estado_mexico')[0]?.value || 
+                     document.getElementsByName('direccion_extranjero')[0]?.value || 
+                     "No especificada";
     
-    // Lógica para capturar NOMBRE y UBICACIÓN dinámica
     if (tipo === 'instructor_escuela') {
         const sel = document.getElementById('nombre_registro');
         nombreMostrado = sel.options[sel.selectedIndex].text;
-        // El instructor sigue usando su estado de la base de datos (puedes cambiarlo si prefieres que también escriba)
-        ubicacionFinal = sel.options[sel.selectedIndex].getAttribute('data-estado') || "Estado de México";
         instructorTxt = "Registro de Instructor";
+        // En instructores locales, si no eligieron estado, usamos el de la DB
+        if (!document.getElementsByName('estado_mexico')[0]?.value) {
+            ubicacionFinal = sel.options[sel.selectedIndex].getAttribute('data-estado') || "Estado de México";
+        }
     } else {
-        // Para Alumnos (Escuela/Ext) e Invitados
         nombreMostrado = document.getElementById('nombre_registro').value;
-        
-        // Capturamos lo que el alumno escribió en el campo de ubicación
-        ubicacionFinal = document.getElementsByName('estado_mexico')[0]?.value || 
-                         document.getElementsByName('direccion_extranjero')[0]?.value || 
-                         "No especificada";
-
-
         if (tipo === 'alumno_escuela') {
             const selM = document.getElementById('maestro_seleccionado');
             instructorTxt = selM.options[selM.selectedIndex].text;
-            
         } else {
             instructorTxt = document.getElementsByName('nombre_maestro_externo')[0]?.value || "N/A";
         }
@@ -216,54 +196,38 @@ async function confirmarAsistenciaFinal() {
     try {
         if (tipoUsuario === 'instructor_escuela') {
             datosRegistro.id_instructor_emw = document.getElementById('nombre_registro').value;
-        }// Dentro de confirmarAsistenciaFinal()
-} else if (tipoUsuario === 'alumno_escuela') {
-    const nombreAlumno = document.getElementById('nombre_registro').value;
-    const comboMaestro = document.getElementById('maestro_seleccionado'); // <--- Ahora sí lo encontrará
-    
-    if (!comboMaestro || !comboMaestro.value) {
-        alert("Por favor, selecciona a tu instructor.");
-        return;
-    }
+        } else if (tipoUsuario === 'alumno_escuela') {
+            const nombreAlumno = document.getElementById('nombre_registro').value;
+            const comboMaestro = document.getElementById('maestro_seleccionado');
+            
+            if (!comboMaestro || !comboMaestro.value) {
+                alert("Por favor, selecciona a tu instructor.");
+                return;
+            }
 
-    const { data: nuevoAl, error: errAl } = await supabaseClient
-        .from('alumnos_emw')
-        .insert([{ 
-            nombre_completo: nombreAlumno,
-            id_instructor_pertenece: parseInt(comboMaestro.value) 
-        }])
-        .select();
-    
-    if (errAl) throw errAl;
-    datosRegistro.id_alumno_emw = nuevoAl[0].id_alumno_emw;
-}
+            const { data: nuevoAl, error: errAl } = await supabaseClient
+                .from('alumnos_emw')
+                .insert([{ 
+                    nombre_completo: nombreAlumno,
+                    id_instructor_pertenece: parseInt(comboMaestro.value) 
+                }])
+                .select();
+            
+            if (errAl) throw errAl;
+            datosRegistro.id_alumno_emw = nuevoAl[0].id_alumno_emw;
 
-    // 3. Inserción limpia
-    const { data: nuevoAl, error: errAl } = await supabaseClient
-        .from('alumnos_emw')
-        .insert([{ 
-            nombre_completo: nombreFormulario,
-            // Convertimos a número entero para que coincida con el tipo 'entero4' de tu DB
-            id_instructor_pertenece: parseInt(idMaestroSelect) 
-        }])
-        .select();
-
-    if (errAl) throw errAl;
-    datosRegistro.id_alumno_emw = nuevoAl[0].id_alumno_emw;
-
-        
         } else {
-            // Buscamos el valor en cualquiera de los dos campos posibles
             const procedenciaFinal = document.getElementsByName('estado_mexico')[0]?.value || 
                                    document.getElementsByName('direccion_extranjero')[0]?.value || 
                                    "Estado de México";
-            //mostrar lo obtenido
+
             const { data: nuevoExt, error: errExt } = await supabaseClient.from('personas_externas').insert([{
                 nombre_completo: document.getElementById('nombre_registro').value,
-                procedencia: procedenciaFinal, // <--- AHORA SÍ USA LA VARIABLE
+                procedencia: procedenciaFinal,
                 rol: tipoUsuario === 'instructor_extranjero' ? 'Maestro Ext' : 
                      tipoUsuario === 'alumno_extranjero' ? 'Alumno Ext' : 'Invitado'
             }]).select();
+            
             if (errExt) throw errExt;
             datosRegistro.id_externo = nuevoExt[0].id_externo;
         }
