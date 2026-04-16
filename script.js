@@ -196,26 +196,27 @@ async function confirmarAsistenciaFinal() {
     try {
         if (tipoUsuario === 'instructor_escuela') {
             datosRegistro.id_instructor_emw = document.getElementById('nombre_registro').value;
-        } else if (tipoUsuario === 'alumno_escuela') {
-            const nombreAlumno = document.getElementById('nombre_registro').value;
-            const comboMaestro = document.getElementById('maestro_seleccionado');
-            
-            if (!comboMaestro || !comboMaestro.value) {
-                alert("Por favor, selecciona a tu instructor.");
-                return;
-            }
+        } } else if (tipoUsuario === 'alumno_escuela') {
+    const nombreAlumno = documento.obtenerElementoPorId('nombre_registro').valor;
+    const comboMaestro = documento.obtenerElementoPorId('maestro_seleccionado');
 
-            const { data: nuevoAl, error: errAl } = await supabaseClient
-                .from('alumnos_emw')
-                .insert([{ 
-                    nombre_completo: nombreAlumno,
-                    id_instructor_pertenece: parseInt(comboMaestro.value) 
-                }])
-                .select();
-            
-            if (errAl) throw errAl;
-            datosRegistro.id_alumno_emw = nuevoAl[0].id_alumno_emw;
+    // CAPTURAMOS EL ESTADO SELECCIONADO POR EL ALUMNO
+    // Usamos la misma lógica que ya tienes para externos para ser consistentes
+    const procedenciaReal = documento.getElementsByName('estado_mexico')[0]?.valor || 
+                           documento.getElementsByName('direccion_extranjero')[0]?.valor || 
+                           'Estado de México';
 
+    const { datos: nuevoAl, error: errAl } = esperar supabaseClient
+        .de('alumnos_emw')
+        .insert([{
+            nombre_complete: nombreAlumno,
+            id_instructor_pertenece: analizarEntero(comboMaestro.valor),
+            procedencia: procedenciaReal // <--- SE GUARDA EL ESTADO DEL ALUMNO
+        }])
+        .seleccionar();
+
+    if (errAl) tirar errAl;
+    datosRegistro.id_alumno_emw = nuevoAl[0].id_alumno_emw;
         } else {
             const procedenciaFinal = document.getElementsByName('estado_mexico')[0]?.value || 
                                    document.getElementsByName('direccion_extranjero')[0]?.value || 
