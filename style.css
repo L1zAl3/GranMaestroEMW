@@ -40,6 +40,59 @@ h2 { font-size: 1rem; color: #666; font-weight: 300; }
     text-align: center;
 }
 
+/*Encabezado*/
+/* Texto por fuera del recuadro */
+.subtitulo-institucional {
+    text-align: center;
+    font-size: 0.75rem;
+    letter-spacing: 3px;
+    color: #666;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+    font-weight: 300;
+}
+
+/* Título del evento dentro del recuadro */
+.titulo-evento {
+    color: #000 !important;
+    font-size: 1.15rem;
+    font-weight: 700;
+    margin: 15px 0;
+    line-height: 1.3;
+}
+
+/* Fechas en negro con líneas rojas delgadas */
+.fechas-caja {
+    border-top: 1px solid #d43737;
+    border-bottom: 1px solid #d43737;
+    padding: 8px 0;
+    display: inline-block;
+    width: 90%; /* Ajusta el ancho de las líneas */
+    margin: 10px auto;
+}
+
+.fecha-texto {
+    color: #000 !important; /* Forzado a negro */
+    font-weight: 900;
+    font-size: 1.1rem;
+    letter-spacing: 1px;
+}
+
+/* RESUMEN: Grande, Justificado y Limpio */
+#info-content {
+    text-align: justify !important;
+    font-size: 1.15rem !important; /* Letra más grande para legibilidad */
+    line-height: 1.7;
+    color: #333;
+    font-style: normal !important; /* Quita cursivas */
+    padding: 15px;
+}
+
+#info-content strong {
+    color: #8B0000; /* Etiquetas en rojo para resaltar */
+}
+
+
 input[type="radio"]:checked + .btn-radio {
     background: var(--rojo-emw);
     color: white;
