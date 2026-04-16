@@ -196,7 +196,7 @@ async function confirmarAsistenciaFinal() {
     try {
         if (tipoUsuario === 'instructor_escuela') {
             datosRegistro.id_instructor_emw = document.getElementById('nombre_registro').value;
-        } } else if (tipoUsuario === 'alumno_escuela') {
+        } else if (tipoUsuario === 'alumno_escuela') {
     const nombreAlumno = documento.obtenerElementoPorId('nombre_registro').valor;
     const comboMaestro = documento.obtenerElementoPorId('maestro_seleccionado');
 
