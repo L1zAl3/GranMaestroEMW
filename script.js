@@ -184,9 +184,19 @@ function editarDatos() {
     document.getElementById('seccion-resumen').style.display = 'none';
 }
 
-// 4. ENVÍO FINAL
+// 4. ENVÍO FINAL MEJORADO
 async function confirmarAsistenciaFinal() {
     const tipoUsuario = document.getElementById('tipo-usuario').value;
+    
+    // Captura segura de ubicación (Procedencia)
+    // Buscamos el valor en cualquiera de los dos posibles inputs
+    const inputEdomex = document.getElementsByName('estado_mexico')[0];
+    const inputExtranjero = document.getElementsByName('direccion_extranjero')[0];
+    
+    const procedenciaFinal = (inputEdomex && inputEdomex.value) ? inputEdomex.value : 
+                             (inputExtranjero && inputExtranjero.value) ? inputExtranjero.value : 
+                             "Estado de México";
+
     let datosRegistro = {
         id_evento: 1,
         id_talla: obtenerIdTalla(document.querySelector('input[name="talla"]:checked').value),
@@ -196,50 +206,49 @@ async function confirmarAsistenciaFinal() {
     try {
         if (tipoUsuario === 'instructor_escuela') {
             datosRegistro.id_instructor_emw = document.getElementById('nombre_registro').value;
+            // Opcional: Podrías actualizar la procedencia del instructor aquí si fuera necesario
+            
         } else if (tipoUsuario === 'alumno_escuela') {
-    const nombreAlumno = document.getElementById('nombre_registro').value;
-    const comboMaestro = document.getElementById('maestro_seleccionado');
+            const nombreAlumno = document.getElementById('nombre_registro').value;
+            const comboMaestro = document.getElementById('maestro_seleccionado');
 
-    // Capturamos el estado seleccionado (esto está bien)
-    const procedenciaReal = document.getElementsByName('estado_mexico')[0]?.value || 
-                           document.getElementsByName('direccion_extranjero')[0]?.value || 
-                           'Estado de México';
+            const { data: nuevoAl, error: errAl } = await supabaseClient
+                .from('alumnos_emw')
+                .insert([{
+                    nombre_completo: nombreAlumno,
+                    id_instructor_pertenece: parseInt(comboMaestro.value),
+                    procedencia: procedenciaFinal // <--- Ahora toma la ubicación real elegida
+                }])
+                .select();
 
-    // CORRECCIÓN DE SINTAXIS AQUÍ:
-    const { data: nuevoAl, error: errAl } = await supabaseClient
-        .from('alumnos_emw')
-        .insert([{
-            nombre_completo: nombreAlumno,
-            id_instructor_pertenece: parseInt(comboMaestro.value),
-            procedencia: procedenciaReal 
-        }])
-        .select();
+            if (errAl) throw errAl;
+            datosRegistro.id_alumno_emw = nuevoAl[0].id_alumno_emw;
 
-    if (errAl) throw errAl;
-    datosRegistro.id_alumno_emw = nuevoAl[0].id_alumno_emw;
         } else {
-            const procedenciaFinal = document.getElementsByName('estado_mexico')[0]?.value || 
-                                   document.getElementsByName('direccion_extranjero')[0]?.value || 
-                                   "Estado de México";
-
-            const { data: nuevoExt, error: errExt } = await supabaseClient.from('personas_externas').insert([{
-                nombre_completo: document.getElementById('nombre_registro').value,
-                procedencia: procedenciaFinal,
-                rol: tipoUsuario === 'instructor_extranjero' ? 'Maestro Ext' : 
-                     tipoUsuario === 'alumno_extranjero' ? 'Alumno Ext' : 'Invitado'
-            }]).select();
+            // Caso para Externos e Invitados
+            const { data: nuevoExt, error: errExt } = await supabaseClient
+                .from('personas_externas')
+                .insert([{
+                    nombre_completo: document.getElementById('nombre_registro').value,
+                    procedencia: procedenciaFinal,
+                    rol: tipoUsuario === 'instructor_extranjero' ? 'Maestro Ext' : 
+                         tipoUsuario === 'alumno_extranjero' ? 'Alumno Ext' : 'Invitado'
+                }])
+                .select();
             
             if (errExt) throw errExt;
             datosRegistro.id_externo = nuevoExt[0].id_externo;
         }
 
+        // Registro en la tabla final de inscripciones
         const { data, error } = await supabaseClient.from('inscripciones_final').insert([datosRegistro]).select();
         if (error) throw error;
 
         sessionStorage.setItem('folio_real', data[0].id_inscripcion);
         window.location.href = "confirmacion.html";
     } catch (err) {
-        alert("Error: " + err.message);
+        console.error("Detalle del error:", err);
+        alert("Error al registrar: " + (err.message || "Verifica tu conexión"));
     }
 }
 
