@@ -54,7 +54,7 @@ h2 { font-size: 1rem; color: #666; font-weight: 300; }
 
 /* Título del evento dentro del recuadro */
 .titulo-evento {
-    font-family: 'Cincel';
+    font-family: 'Cinzel';
     font-size: 1.25rem;
     line-height: 1.6;
     color: #1a1a1a;
@@ -76,7 +76,7 @@ h2 { font-size: 1rem; color: #666; font-weight: 300; }
 }
 
 .fecha-texto {
-    color: #000000 !important;
+    color: #000000;
     font-size: 1.1rem;
     font-weight: 800;
     letter-spacing: 4px; /* Esto da el toque sofisticado */
