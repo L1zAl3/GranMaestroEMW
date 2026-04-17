@@ -163,11 +163,11 @@ function mostrarResumen() {
     }
 
     let resumenHTML = `
-        <p><strong>Nombre: + "<br>" </strong> ${nombreMostrado}</p>
-        <p><strong>Instructor: + "<br>" </strong> ${instructorTxt}</p>
-        <p><strong>Ubicación: + "<br>" </strong> ${ubicacionFinal}</p>
-        <p><strong>Talla de playera: + "<br>" </strong> ${talla}</p>
-        <p><strong>Estatus de pago: + "<br>" </strong> ${pago}</p>
+        <p><strong>Nombre: <br> </strong> ${nombreMostrado}</p>
+        <p><strong>Instructor: <br> </strong> ${instructorTxt}</p>
+        <p><strong>Ubicación: <br> </strong> ${ubicacionFinal}</p>
+        <p><strong>Talla de playera: <br> </strong> ${talla}</p>
+        <p><strong>Estatus de pago: <br> </strong> ${pago}</p>
         <hr>
         <p style="font-size: 0.9em; color: #666; font-style: italic;">
             "Confirma que tus datos sean correctos para finalizar tu registro."
