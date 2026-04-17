@@ -64,7 +64,7 @@ h2 { font-size: 1rem; color: #666; font-weight: 300; }
     max-width: 90%;
     margin-left: auto;
     margin-right: auto;
-
+}
 /* Fechas en negro con líneas rojas delgadas */
 .fechas-caja {
     border-top: 1px solid #bababa;
