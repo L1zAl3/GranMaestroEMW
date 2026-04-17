@@ -79,8 +79,9 @@ h2 { font-size: 1rem; color: #666; font-weight: 300; }
     color: #000000 !important;
     font-size: 1.1rem;
     font-weight: 800;
-    letter-spacing: 3px; /* Esto da el toque sofisticado */
+    letter-spacing: 4px; /* Esto da el toque sofisticado */
     text-transform: uppercase;
+    font-family: 'Arial';
 }
 
 /* RESUMEN: Grande, Justificado y Limpio */
