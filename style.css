@@ -54,27 +54,15 @@ h2 { font-size: 1rem; color: #666; font-weight: 300; }
 
 /* Título del evento dentro del recuadro */
 .titulo-evento {
-    /* 1. Fuente sofisticada (Asegúrate de tenerla en tu HTML) */
-    font-family: 'Playfair Display', serif; 
-    
-    /* 2. Tamaño y Estilo (Sin negritas como pediste) */
-    font-size: 1.2rem;
-    font-weight: 400; /* 400 es el peso normal, quita lo "bold" */
-    font-style: italic;
-    
-    /* 3. Color Negro Suave (Gris Oxford) */
-    color: #2c2c2c; /* Un negro menos puro que el #000000 */
-    
-    /* 4. Espaciado y Lectura */
-    line-height: 1.5;
-    letter-spacing: 0.5px; /* Un toque mínimo para que se vea limpio */
-    
-    /* 5. Alineación y Márgenes */
+    font-family: 'Montserrat', sans-serif; /* O Arial Narrow */
+    font-size: 1rem;
+    font-weight: 300; /* Muy delgada */
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: #444; /* Un gris oscuro */
+    line-height: 1.8;
     text-align: center;
-    max-width: 85%;
-    margin: 0 auto 25px auto;
-    display: block;
-}
+    font-style: normal; /* Sin cursiva */
 }
 /* Fechas en negro con líneas rojas delgadas */
 .fechas-caja {
