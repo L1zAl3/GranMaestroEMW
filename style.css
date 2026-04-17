@@ -55,14 +55,16 @@ h2 { font-size: 1rem; color: #666; font-weight: 300; }
 /* Título del evento dentro del recuadro */
 .titulo-evento {
     font-family: 'Cinzel', serif; /* La fuente del linaje */
-    font-size: 0.95rem; /* Ajuste para móviles */
+    /* Usamos un tamaño que se adapte al ancho de la pantalla */
+    font-size: clamp(1.1rem, 4vw, 1.4rem); 
     font-weight: 700;
-    line-height: 1.4;
+    line-height: 1.3;
     color: #000;
     text-align: center;
-    max-width: 90%;
+    max-width: 95%; /* Evita que toque los bordes */
     margin: 15px auto;
-    font-style: normal; /* Cinzel no usa cursiva */
+    letter-spacing: 0.5px; /* Un poco de aire entre letras */
+    text-transform: uppercase;
 }
     
 /* Fechas en negro con líneas rojas delgadas */
