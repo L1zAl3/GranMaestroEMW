@@ -56,7 +56,7 @@ h2 { font-size: 1rem; color: #666; font-weight: 300; }
 .titulo-evento {
     font-family: 'Montserrat', sans-serif; /* O Arial Narrow */
     font-size: 1rem;
-    font-weight: 300; /* Muy delgada */
+    font-weight: 700; /* Muy delgada */
     letter-spacing: 1px;
     text-transform: uppercase;
     color: #444; /* Un gris oscuro */
