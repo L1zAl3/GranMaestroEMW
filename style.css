@@ -55,7 +55,7 @@ h2 { font-size: 1rem; color: #666; font-weight: 300; }
 /* Título del evento dentro del recuadro */
 .titulo-evento {
     font-family: 'Cinzel', serif; /* La fuente del linaje */
-    font-size: 2.3rem; /* Ajuste para móviles */
+    font-size: 1.8rem; /* Ajuste para móviles */
     font-weight: 700;
     line-height: 1.4;
     color: #000;
